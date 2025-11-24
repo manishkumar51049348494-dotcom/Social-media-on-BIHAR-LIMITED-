@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messenger Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #fff; overflow: hidden; }
+        
+        /* --- HEADER --- */
+        .header { padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .header h1 { margin: 0; font-size: 24px; }
+        .icon-btn { font-size: 18px; cursor: pointer; padding: 8px; background: #f0f2f5; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; }
+
+        /* --- ACTIVE USERS --- */
+        .active-users { display: flex; gap: 15px; padding: 15px; overflow-x: auto; border-bottom: 1px solid #f0f0f0; scrollbar-width: none; }
+        .user-circle { width: 50px; height: 50px; border-radius: 50%; background: #ddd; position: relative; flex-shrink: 0; background-size: cover; }
+        .online-dot { width: 13px; height: 13px; background: #31a24c; border-radius: 50%; position: absolute; bottom: 0; right: 0; border: 2px solid #fff; }
+        .user-name-lbl { font-size: 12px; text-align: center; margin-top: 5px; color: #666; width: 50px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* --- CHAT LIST --- */
+        .chat-list { padding: 0; margin: 0; list-style: none; height: calc(100vh - 160px); overflow-y: auto; }
+        .chat-item { display: flex; align-items: center; padding: 12px 15px; cursor: pointer; transition: 0.2s; }
+        .chat-item:active { background: #f5f5f5; }
+        .chat-img { width: 55px; height: 55px; border-radius: 50%; background: #ccc; margin-right: 15px; object-fit: cover; }
+        .chat-info { flex: 1; overflow: hidden; }
+        .chat-name { font-weight: 600; font-size: 16px; color: #050505; }
+        .chat-preview { margin: 2px 0 0; color: #65676b; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* --- MODALS (Create Group & Info) --- */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); z-index: 200; display: none; 
+            align-items: flex-end; 
+        }
+        .modal-content { 
+            width: 100%; background: white; border-radius: 15px 15px 0 0; 
+            padding: 20px; box-sizing: border-box; max-height: 85%; overflow-y: auto;
+            animation: slideUp 0.3s; display: flex; flex-direction: column;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .group-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; font-size: 16px; box-sizing: border-box; }
+        
+        .friend-list-scroll { flex: 1; overflow-y: auto; margin-bottom: 15px; max-height: 300px; }
+        .friend-select-item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .friend-select-item input { width: 20px; height: 20px; margin-right: 15px; }
+        
+        .action-btn { width: 100%; padding: 12px; background: #0084ff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+
+        /* --- CHAT ROOM SCREEN --- */
+        .chat-room { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: none; flex-direction: column; z-index: 100; }
+        .room-header { padding: 10px 10px; background: #fff; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .room-info-click { flex: 1; display: flex; flex-direction: column; cursor: pointer; }
+        .messages { flex: 1; padding: 15px; overflow-y: auto; background: #fff; display: flex; flex-direction: column; gap: 10px; }
+        
+        .msg { padding: 10px 15px; border-radius: 18px; max-width: 75%; font-size: 15px; line-height: 1.4; word-wrap: break-word; }
+        .msg.received { background: #e4e6eb; color: black; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .msg.sent { background: #0084ff; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        
+        .input-area { padding: 10px; display: flex; gap: 10px; border-top: 1px solid #eee; align-items: center; }
+        .input-area input { flex: 1; padding: 10px 15px; border-radius: 20px; border: 1px solid #ddd; outline: none; background: #f0f2f5; }
+        .send-btn { color: #0084ff; font-size: 24px; cursor: pointer; border: none; background: none; }
+
+        /* --- CALL SCREEN --- */
+        .call-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #222; z-index: 300; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        .call-avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid white; margin-bottom: 20px; animation: pulse 1.5s infinite; }
+        .end-call-btn { background: #ff3b30; width: 60px; height: 60px; border-radius: 50%; border: none; color: white; font-size: 24px; margin-top: 50px; cursor: pointer; display: flex; align-items: center; justify-content: center;}
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(0, 0, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); } }
+
+        /* --- INFO MODAL STYLES --- */
+        .info-member-row { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .info-img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; object-fit: cover; }
+        .admin-badge { background: #e4e6eb; color: #000; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: auto; font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <!-- 1. MAIN SCREEN -->
+    <div id="mainScreen">
+        <div class="header">
+            <h1>Chats</h1>
+            <div class="icon-btn" onclick="openCreateGroupModal()">
+                <i class="fas fa-edit" style="color: black;"></i>
+            </div>
+        </div>
+        
+        <!-- Active Users -->
+        <div class="active-users">
+            <div style="text-align:center;">
+                <div class="user-circle" style="background-image: url('https://via.placeholder.com/50/FF0000?text=D');"><div class="online-dot"></div></div>
+                <div class="user-name-lbl">Demo</div>
+            </div>
+            <div style="text-align:center;">
+                <div class="user-circle" style="background-image: url('https://via.placeholder.com/50/0000FF?text=A');"><div class="online-dot"></div></div>
+                <div class="user-name-lbl">Anika</div>
+            </div>
+            <div style="text-align:center;">
+                <div class="user-circle" style="background-image: url('https://via.placeholder.com/50/008000?text=R');"><div class="online-dot"></div></div>
+                <div class="user-name-lbl">Rahul</div>
+            </div>
+        </div>
+
+        <!-- Chat List -->
+        <ul class="chat-list" id="chatList">
+            <!-- JavaScript Will Load Chats Here -->
+        </ul>
+    </div>
+
+    <!-- 2. CREATE GROUP MODAL -->
+    <div id="createGroupModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="margin:0;">Create Group</h2>
+                <i class="fas fa-times" style="font-size:24px; cursor:pointer;" onclick="closeModal('createGroupModal')"></i>
+            </div>
+            
+            <input type="text" id="newGroupName" class="group-input" placeholder="Group Name (Optional)">
+            
+            <h4 style="margin: 0 0 10px 0; color: #666;">Select Friends:</h4>
+            <div class="friend-list-scroll" id="friendSelectionList"></div>
+            
+            <button class="action-btn" onclick="createGroup()">Create Group</button>
+        </div>
+    </div>
+
+    <!-- 3. CHAT ROOM -->
+    <div id="chatRoom" class="chat-room">
+        <div class="room-header">
+            <i class="fas fa-arrow-left" onclick="closeChatRoom()" style="font-size: 24px; color:#0084ff; cursor: pointer; padding: 5px;"></i>
+            
+            <img id="roomImg" src="" style="width:40px; height:40px; border-radius:50%; object-fit: cover;">
+            
+            <div class="room-info-click" onclick="openGroupDetails()">
+                <strong id="roomName" style="font-size: 16px;">Name</strong>
+                <span id="roomSubtitle" style="font-size:12px; color:grey;">Active</span>
+            </div>
+            
+            <i class="fas fa-phone" style="font-size: 20px; color:#0084ff; margin-right:15px; cursor: pointer;" onclick="startCall('voice')"></i>
+            <i class="fas fa-video" style="font-size: 20px; color:#0084ff; margin-right:15px; cursor: pointer;" onclick="startCall('video')"></i>
+            <i class="fas fa-info-circle" style="font-size: 20px; color:#0084ff; cursor: pointer;" onclick="openGroupDetails()"></i>
+        </div>
+        
+        <div class="messages" id="msgContainer"></div>
+        
+        <div class="input-area">
+            <i class="fas fa-plus-circle" style="font-size: 24px; color:#0084ff;"></i>
+            <input type="text" id="msgInput" placeholder="Aa">
+            <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- 4. GROUP DETAILS MODAL -->
+    <div id="detailsModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="margin:0;">Details</h2>
+                <i class="fas fa-times" style="font-size:24px; cursor:pointer;" onclick="closeModal('detailsModal')"></i>
+            </div>
+            <div style="text-align:center; margin-bottom: 20px;">
+                <img id="detailImg" src="" style="width:80px; height:80px; border-radius:50%;">
+                <h3 id="detailName" style="margin: 10px 0 5px 0;">Group Name</h3>
+                <p id="detailType" style="color:grey; margin:0;">Group · Admin: You</p>
+            </div>
+            
+            <h4 style="margin:0 0 10px 0;">Members</h4>
+            <div class="friend-list-scroll" id="groupMembersList">
+                <!-- Members loaded here -->
+            </div>
+            
+            <button class="action-btn" style="background: #e4e6eb; color: black; margin-top: 10px;" onclick="closeModal('detailsModal')">Close</button>
+        </div>
+    </div>
+
+    <!-- 5. CALL SCREEN -->
+    <div id="callScreen" class="call-screen">
+        <img id="callAvatar" class="call-avatar" src="">
+        <h2 id="callName" style="margin-bottom: 5px;">Name</h2>
+        <p id="callStatus" style="color:#ccc;">Ringing...</p>
+        <div id="callTypeLabel" style="margin-top: 10px; font-size: 14px; color: #4CD964;"></div>
+        
+        <button class="end-call-btn" onclick="endCall()">
+            <i class="fas fa-phone-slash"></i>
+        </button>
+    </div>
+
+    <script>
+        // --- STORAGE KEY ---
+        const DATA_KEY = 'my_messenger_data_v2';
+
+        // --- DEFAULT DATA (If no storage) ---
+        const friends = [
+            { id: 1, name: "Demo Friend", img: "https://via.placeholder.com/50/FF0000/FFFFFF?text=D" },
+            { id: 2, name: "Anika Queen", img: "https://via.placeholder.com/50/0000FF/FFFFFF?text=A" },
+            { id: 3, name: "Rahul Verma", img: "https://via.placeholder.com/50/008000/FFFFFF?text=R" },
+            { id: 4, name: "Simran", img: "https://via.placeholder.com/50/FFA500/FFFFFF?text=S" },
+            { id: 5, name: "Akash King", img: "https://via.placeholder.com/50/800080/FFFFFF?text=K" }
+        ];
+
+        let chats = [];
+        let activeChatId = null;
+
+        // --- INIT ---
+        window.onload = function() {
+            loadData();
+            renderChatList();
+        };
+
+        function loadData() {
+            const stored = localStorage.getItem(DATA_KEY);
+            if (stored) {
+                chats = JSON.parse(stored);
+            } else {
+                // Create dummy chats if first time
+                chats = [
+                    { id: 'dm_1', type: 'dm', name: 'Demo Friend', img: friends[0].img, members: ['You', 'Demo Friend'], messages: [{sender:'Friend', text:'Hello!'}] },
+                    { id: 'dm_2', type: 'dm', name: 'Anika Queen', img: friends[1].img, members: ['You', 'Anika Queen'], messages: [{sender:'Friend', text:'Call me later.'}] }
+                ];
+                saveData();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem(DATA_KEY, JSON.stringify(chats));
+        }
+
+        // --- RENDER LIST ---
+        function renderChatList() {
+            const list = document.getElementById('chatList');
+            list.innerHTML = '';
+            
+            // Sort by newest message (optional, simplified here)
+            
+            chats.forEach(chat => {
+                const li = document.createElement('li');
+                li.className = 'chat-item';
+                li.onclick = () => openChat(chat.id);
+                
+                const lastMsg = chat.messages.length > 0 ? chat.messages[chat.messages.length-1].text : 'No messages yet';
+                const displayName = chat.type === 'group' ? chat.name : chat.name;
+                
+                li.innerHTML = `
+                    <img class="chat-img" src="${chat.img}">
+                    <div class="chat-info">
+                        <div class="chat-name">${displayName}</div>
+                        <div class="chat-preview">${lastMsg}</div>
+                    </div>
+                `;
+                list.prepend(li); // Newest on top visually
+            });
+        }
+
+        // --- CREATE GROUP ---
+        function openCreateGroupModal() {
+            const list = document.getElementById('friendSelectionList');
+            list.innerHTML = '';
+            
+            friends.forEach(f => {
+                list.innerHTML += `
+                    <div class="friend-select-item">
+                        <input type="checkbox" value="${f.name}" id="f_${f.id}">
+                        <img src="${f.img}" style="width:35px; height:35px; border-radius:50%; margin-right:10px;">
+                        <label for="f_${f.id}" style="font-size:15px;">${f.name}</label>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('createGroupModal').style.display = 'flex';
+        }
+
+        function createGroup() {
+            const nameInput = document.getElementById('newGroupName').value.trim();
+            const checkboxes = document.querySelectorAll('#friendSelectionList input:checked');
+            
+            if (checkboxes.length === 0) return alert("Select at least 1 friend!");
+            
+            const members = ['You (Admin)'];
+            checkboxes.forEach(box => members.push(box.value));
+            
+            const groupName = nameInput || members[1] + " & Friends";
+            
+            const newChat = {
+                id: 'grp_' + Date.now(),
+                type: 'group',
+                name: groupName,
+                img: 'https://via.placeholder.com/60/9c27b0/FFFFFF?text=GRP',
+                members: members,
+                admin: 'You',
+                messages: [{sender:'System', text: `You created group "${groupName}"`}]
+            };
+            
+            chats.push(newChat); // Add to data
+            saveData(); // Save to local storage
+            renderChatList(); // Update UI
+            
+            closeModal('createGroupModal');
+            openChat(newChat.id); // Open immediately
+        }
+
+        // --- CHAT ROOM ---
+        function openChat(chatId) {
+            activeChatId = chatId;
+            const chat = chats.find(c => c.id === chatId);
+            
+            document.getElementById('roomName').innerText = chat.name;
+            document.getElementById('roomImg').src = chat.img;
+            document.getElementById('roomSubtitle').innerText = chat.type === 'group' ? `${chat.members.length} members` : 'Active now';
+            
+            renderMessages();
+            document.getElementById('chatRoom').style.display = 'flex';
+        }
+
+        function renderMessages() {
+            const container = document.getElementById('msgContainer');
+            container.innerHTML = '';
+            const chat = chats.find(c => c.id === activeChatId);
+            
+            chat.messages.forEach(m => {
+                const div = document.createElement('div');
+                if(m.sender === 'System') {
+                    div.style.cssText = "text-align:center; font-size:12px; color:grey; margin:10px;";
+                    div.innerText = m.text;
+                } else {
+                    div.className = m.sender === 'You' ? 'msg sent' : 'msg received';
+                    div.innerText = m.text;
+                }
+                container.appendChild(div);
+            });
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('msgInput');
+            const txt = input.value.trim();
+            if(!txt) return;
+            
+            const chat = chats.find(c => c.id === activeChatId);
+            chat.messages.push({sender: 'You', text: txt});
+            
+            saveData();
+            renderMessages();
+            renderChatList(); // Update preview in list
+            input.value = '';
+        }
+
+        function closeChatRoom() {
+            document.getElementById('chatRoom').style.display = 'none';
+            activeChatId = null;
+        }
+
+        // --- GROUP DETAILS & CALLS ---
+        function openGroupDetails() {
+            const chat = chats.find(c => c.id === activeChatId);
+            
+            document.getElementById('detailName').innerText = chat.name;
+            document.getElementById('detailImg').src = chat.img;
+            document.getElementById('detailType').innerText = chat.type === 'group' ? 'Group Chat' : 'Private Chat';
+            
+            const list = document.getElementById('groupMembersList');
+            list.innerHTML = '';
+            
+            chat.members.forEach(m => {
+                const isAdmin = m.includes('Admin');
+                const name = m.replace(' (Admin)', '');
+                const badge = isAdmin ? '<span class="admin-badge">Admin</span>' : '';
+                
+                list.innerHTML += `
+                    <div class="info-member-row">
+                        <img src="https://via.placeholder.com/40/ddd/000?text=${name[0]}" class="info-img">
+                        <span>${name}</span>
+                        ${badge}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('detailsModal').style.display = 'flex';
+        }
+
+        function startCall(type) {
+            const chat = chats.find(c => c.id === activeChatId);
+            
+            document.getElementById('callName').innerText = chat.type === 'group' ? `${chat.name} (${chat.members.length})` : chat.name;
+            document.getElementById('callAvatar').src = chat.img;
+            document.getElementById('callTypeLabel').innerText = type === 'video' ? "🎥 Video Call Request" : "📞 Voice Call Request";
+            
+            document.getElementById('callScreen').style.display = 'flex';
+        }
+
+        function endCall() {
+            document.getElementById('callScreen').style.display = 'none';
+        }
+
+        // --- UTILS ---
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+    </script>
+</body>
+</html>
