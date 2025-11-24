@@ -1,0 +1,2488 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AKASH VS ANIKA (Full Menu Added)</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* --- GENERAL STYLES --- */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f0f2f5; 
+        }
+        .header {
+            background-color: #4267B2;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky; 
+            top: 0;
+            z-index: 100;
+        }
+        .header h1 { margin: 0; font-size: 24px; }
+        
+        /* MENU & DROPDOWN (Old styles kept as requested) */
+        .settings-menu-container { position: relative; cursor: pointer; }
+        .menu-icon { font-size: 28px; font-weight: bold; padding: 0 10px; }
+        
+        /* ⭐ NEW FACEBOOK STYLE FULL SCREEN MENU CSS ⭐ */
+        .fb-full-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #f0f2f5; /* Facebook Grey BG */
+            z-index: 5000; /* Sabse upar dikhega */
+            display: none; /* Shuru me band rahega */
+            flex-direction: column;
+            overflow-y: auto;
+            animation: slideInRight 0.3s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .fb-menu-header {
+            background: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .fb-menu-title { font-size: 24px; font-weight: bold; margin: 0; color: black; }
+        .fb-close-btn {
+            font-size: 24px;
+            cursor: pointer;
+            background: #e4e6eb;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+        }
+
+        .fb-menu-profile {
+            background: white;
+            margin: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        .fb-menu-profile img { width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; }
+        
+        .fb-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 Column Grid like Facebook */
+            gap: 10px;
+            padding: 0 15px 20px;
+        }
+        
+        .fb-menu-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            font-weight: 600;
+            color: #1c1e21;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .fb-menu-card:active { transform: scale(0.98); background: #f2f2f2; }
+        .fb-menu-icon { font-size: 26px; margin-bottom: 10px; color: #1877F2; }
+
+        .fb-logout-btn {
+            background: #e4e6eb;
+            text-align: center;
+            padding: 12px;
+            margin: 0 15px 30px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            color: black;
+        }
+        /* ⭐ END MENU CSS ⭐ */
+
+        .settings-dropdown {
+            position: absolute; top: 40px; right: 0; background-color: white;
+            border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            width: 250px; z-index: 101; display: none; padding: 10px 0;
+        }
+        .settings-dropdown.open { display: block; }
+        .dropdown-item {
+            display: flex; align-items: center; padding: 10px 15px; color: #1c1e21;
+            text-decoration: none; cursor: pointer; font-weight: 500;
+        }
+        .dropdown-item:hover { background-color: #f0f2f5; }
+        .dropdown-icon { font-size: 20px; margin-right: 15px; width: 25px; text-align: center; }
+
+        /* ⭐ ADMIN SECURITY CSS ⭐ */
+        .admin-only-item {
+            display: none !important; 
+        }
+        .admin-delete-btn {
+            background-color: #dc3545; 
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: auto;
+            display: none; 
+        }
+
+        /* LAYOUT */
+        .main-wrapper {
+            max-width: 1200px; margin: 0 auto; padding: 20px 0;
+            display: flex; justify-content: space-between; gap: 20px;
+        }
+        .sidebar {
+            width: 280px; min-height: 100vh; position: sticky; top: 60px; 
+            padding-top: 20px; display: block; 
+        }
+        .sidebar-item {
+            display: flex; align-items: center; padding: 10px; margin-bottom: 5px;
+            border-radius: 8px; cursor: pointer; transition: background-color 0.2s;
+            text-decoration: none; color: #1c1e21; font-weight: 600;
+        }
+        .sidebar-item:hover { background-color: #e4e6eb; }
+        .sidebar-icon { font-size: 24px; margin-right: 15px; width: 30px; text-align: center; }
+        .sidebar-profile { padding: 10px; margin-bottom: 15px; border-bottom: 1px solid #ddd; }
+        .sidebar-profile img { width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; }
+
+        .content-container { 
+            width: 100%; max-width: 800px; flex-grow: 1; 
+            position: relative; /* PTR के लिए */
+        }
+        .content-section { 
+            width: 100%; 
+            display: none; 
+            /* फ़ीड को स्क्रॉल करने के लिए: */
+            overflow-y: auto; 
+            height: calc(100vh - 100px); /* Adjust height as needed for scrollable area */
+        }
+        .content-section.active { display: block; }
+
+        @media (max-width: 1024px) {
+            .sidebar { display: none; }
+            .main-wrapper { padding: 20px; justify-content: center; }
+            .header > div:not(.settings-menu-container) { display: none; }
+            .header-nav-links a { display: inline-block; }
+            .content-section { height: auto; } /* Mobile height adjustment */
+        }
+        .header-nav-links { display: flex; align-items: center; }
+        .header-nav-links a {
+            color: white; margin-right: 15px; text-decoration: none; padding: 5px 10px;
+            border-radius: 4px; transition: background-color 0.2s;
+        }
+        .header-nav-links a:hover { background-color: #3b5998; }
+        .header-nav-links a.active { font-weight: bold; border-bottom: 2px solid white; }
+        
+        /* 🚨 NEW CSS FOR PULL-TO-REFRESH */
+        #ptrIndicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background-color: #e4e6eb;
+            transition: height 0.3s ease-out; /* Smooth transition */
+            z-index: 100; /* Header के नीचे, Content के ऊपर */
+        }
+        #ptrIndicator .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #1877F2; /* Blue spinner */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* 🚨 END NEW PULL-TO-REFRESH CSS */
+
+        /* POST & INPUT STYLES */
+        .post-input-box {
+            background-color: white; padding: 15px; border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); margin-bottom: 20px;
+        }
+        .post-input-box textarea {
+            width: 95%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc;
+            border-radius: 6px; resize: vertical;
+        }
+        .post-input-box button, .profile-section button {
+            background-color: #42b72a; color: white; padding: 8px 15px;
+            border: none; border-radius: 6px; cursor: pointer;
+        }
+        .post, .reel-item-container { 
+            background-color: white; padding: 15px; border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); margin-bottom: 15px;
+        }
+        .post-media {
+            width: 100%; max-height: 500px; object-fit: contain; border-radius: 6px;
+            margin-top: 10px; display: block;
+        }
+        .post-header-row {
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        /* SHARED POST STYLE */
+        .shared-post-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #fff; 
+        }
+        .shared-post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .shared-post-header img {
+            width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;
+        }
+        .shared-post-header strong { font-size: 14px; color: #1c1e21; }
+
+        #imagePreviewContainer {
+            margin-top: 10px; padding: 10px; border: 1px dashed #ccc;
+            border-radius: 4px; text-align: center; display: none; 
+        }
+        #imagePreview {
+            max-width: 100%; max-height: 150px; border-radius: 4px;
+            margin-bottom: 5px; object-fit: contain;
+        }
+        
+        .post-actions {
+            border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px;
+            display: flex; justify-content: space-around;
+        }
+        .post-action-button { /* Common style for new action buttons */
+            background: none; border: none; color: #606770; cursor: pointer;
+            font-weight: 500; padding: 5px 10px; border-radius: 5px;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .post-action-button:hover { background-color: #f0f2f5; }
+        
+        /* ⭐ NEW LIKE/EMOJI STYLES ⭐ */
+        .like-container {
+            position: relative;
+            z-index: 10;
+        }
+        .like-button {
+             color: #606770 !important; /* Default grey color */
+             transition: color 0.1s;
+        }
+        .like-button.liked {
+            color: #ff0000 !important; /* **RED** color when liked */
+        }
+        .like-button.reacted {
+             color: #ffc107 !important; /* Reaction icon color (e.g., Yellow for emoji) */
+        }
+
+        .emoji-container {
+            display: none; /* Hide by default */
+            position: absolute;
+            bottom: 40px; /* Position above the like button */
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border-radius: 20px;
+            padding: 5px 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+            z-index: 200; /* Ensure it is on top */
+        }
+        .emoji {
+            font-size: 24px;
+            padding: 0 5px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .emoji:hover {
+            transform: scale(1.2);
+        }
+        
+        .share-menu {
+             position: absolute;
+             bottom: 40px;
+             right: 0;
+             background-color: white;
+             border: 1px solid #ccc;
+             border-radius: 8px;
+             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+             width: 150px;
+             z-index: 200;
+             display: none;
+        }
+        .share-menu-reel { /* REEL SHARE MENU (Added for clarity, but uses existing .share-menu styles) */
+            position: absolute;
+            bottom: 40px;
+            right: auto;
+            left: 0; /* Position to the left of the button */
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            width: 150px;
+            z-index: 200;
+            display: none;
+        }
+        .share-menu-item {
+            padding: 10px;
+            cursor: pointer;
+            display: block;
+            color: #1c1e21;
+        }
+        .share-menu-item:hover {
+             background-color: #f0f2f5;
+        }
+        /* ⭐ END NEW LIKE/EMOJI STYLES ⭐ */
+        
+        /* COMMENTS */
+        .comments-section { margin-top: 15px; padding: 10px 0; border-top: 1px solid #eee; }
+        .comment-input-area { display: flex; gap: 10px; margin-bottom: 15px; }
+        .comment-input-area input {
+            flex-grow: 1; padding: 8px 12px; border: 1px solid #ccc; border-radius: 18px; font-size: 14px;
+        }
+        .comment-input-area button {
+            background-color: #1877F2; color: white; padding: 8px 15px;
+            border-radius: 18px; font-size: 14px; font-weight: 500;
+        }
+        .comment-item { display: flex; margin-bottom: 10px; gap: 10px; }
+        .comment-text-bubble {
+            background-color: #f0f2f5; padding: 8px 12px; border-radius: 18px; max-width: 85%;
+        }
+        .comment-text-bubble strong { display: block; font-size: 13px; color: #1c1e21; }
+        .comment-text-bubble span { font-size: 12px; color: #606770; display: block; margin-top: 2px; }
+        .comment-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+
+        /* PROFILE */
+        .profile-info {
+            position: relative; margin-bottom: 20px; background-color: white;
+            border-radius: 8px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        .cover-photo-container {
+            height: 300px; background-color: #ccc;
+            background-image: url('https://via.placeholder.com/800x300/4067a9/FFFFFF?text=Click+to+Add+Cover');
+            background-size: cover; background-position: center;
+            border-top-left-radius: 8px; border-top-right-radius: 8px; position: relative;
+        }
+        #coverPhotoInput { display: none; }
+        .cover-photo-button {
+            position: absolute; bottom: 15px; right: 15px; background-color: #f0f2f5; 
+            color: #000; padding: 8px 15px; border: none; border-radius: 6px;
+            cursor: pointer; font-size: 14px; font-weight: bold; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        .profile-photo-wrapper {
+            position: absolute; top: 215px; left: 50%; transform: translateX(-50%);
+            z-index: 10; background-color: white; padding: 5px; border-radius: 50%;
+            box-shadow: 0 0 0 4px white; cursor: pointer; 
+        }
+        .profile-photo-wrapper::after {
+            content: '📸'; position: absolute; bottom: 15px; right: 15px;
+            background-color: #e4e6eb; border-radius: 50%; padding: 8px; font-size: 18px;
+            line-height: 1; border: 2px solid white; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        .profile-photo-wrapper img {
+            width: 170px; height: 170px; border-radius: 50%; object-fit: cover; border: 0; display: block; 
+        }
+        .user-details { padding-top: 100px; padding-bottom: 20px; text-align: center; }
+        .user-details h2 { margin-bottom: 5px; font-size: 28px; }
+        #photoUploadInput { display: none; }
+        .profile-tabs {
+            display: flex; justify-content: center; border-top: 1px solid #ddd;
+            margin-top: 20px; margin-bottom: 20px; background-color: #f7f7f7;
+        }
+        .profile-tab-button {
+            background: none; border: none; padding: 15px 20px; font-size: 16px;
+            font-weight: bold; color: #606770; cursor: pointer; border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .profile-tab-button.active { color: #1877F2; border-bottom: 3px solid #1877F2; }
+        .tab-content { display: none; }
+        .tab-content.active {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; padding: 10px;
+        }
+        .grid-item {
+            background-color: #ddd; height: 150px; display: flex; align-items: center;
+            justify-content: center; font-size: 12px; color: #555; overflow: hidden;
+            text-align: center; padding: 5px; cursor: pointer; position: relative;
+        }
+        .grid-item img { width: 100%; height: 100%; object-fit: cover; }
+        .grid-item-icon {
+            position: absolute; top: 5px; right: 5px; color: white;
+            font-size: 20px; text-shadow: 0 0 3px black; pointer-events: none;
+        }
+        
+        /* CHAT & OTHER */
+        .ist-time-bar {
+            text-align: center; margin-bottom: 15px; font-weight: bold; color: #606770;
+            background-color: #e9ebee; padding: 10px; border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .message-bubble {
+            max-width: 80%; padding: 8px 12px; border-radius: 18px;
+            margin-bottom: 10px; word-wrap: break-word;
+        }
+        .message-bubble p { margin: 0; line-height: 1.4; color: #1c1e21; }
+        .message-bubble.sent { background-color: #dcf8c6; margin-left: auto; }
+        .message-bubble.received { background-color: #ffffff; border: 1px solid #eee; margin-right: auto; }
+        .message-bubble .timestamp {
+            display: block; font-size: 10px; color: #888; margin-top: 3px; text-align: right;
+        }
+        .reel-item-container { max-width: 400px; width: 100%; margin: 0 auto; }
+        
+        .report-form {
+            background-color: white; padding: 25px; border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        .report-form input[type="text"], .report-form select, .report-form textarea {
+            width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc;
+            border-radius: 6px; box-sizing: border-box; 
+        }
+        .report-form button {
+            width: 100%; padding: 12px; background-color: #4267B2; 
+            color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+        }
+        
+        /* STORIES */
+        .stories-tray {
+            display: flex; overflow-x: auto; padding: 10px 0; margin-bottom: 20px;
+            background-color: white; border-radius: 8px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+        }
+        .story-card {
+            width: 100px; height: 170px; margin-left: 10px; border-radius: 10px;
+            overflow: hidden; position: relative; cursor: pointer;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2); display: inline-block;
+            flex-shrink: 0; border: 3px solid transparent; transition: all 0.2s;
+        }
+        .story-card:not(.viewed) { border: 3px solid #1877F2; }
+        .story-card.viewed { border: 3px solid #ccc; }
+        .story-card:hover { transform: scale(1.03); box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3); }
+        .story-card .story-image {
+            width: 100%; height: 100%; object-fit: cover; position: absolute;
+            top: 0; left: 0; z-index: 1; 
+        }
+        .story-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: var(--story-bg-image, none); background-size: cover;
+            background-position: center; filter: brightness(0.9); z-index: 0; 
+        }
+        
+        /* Add Story Card */
+        .story-card.add-story {
+            border: 1px solid #ddd; background-color: white; box-shadow: none;
+        }
+        .story-card.add-story .story-image {
+            height: 60%; position: static; border-top-left-radius: 10px;
+            border-top-right-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0;
+        }
+        .story-card.add-story::before { content: none; }
+        .story-card.add-story .story-plus-icon {
+            position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);
+            width: 40px; height: 40px; background-color: #1877F2; color: white;
+            border-radius: 50%; line-height: 40px; text-align: center;
+            font-size: 30px; font-weight: 300; border: 3px solid white; z-index: 3;
+        }
+        .story-card.add-story .story-profile-icon { /* Hide profile icon on + Story */
+             display: none;
+        }
+        
+        /* My Uploaded Story */
+        .story-card.my-uploaded-story {
+            border: 3px solid #1877F2; background-color: transparent; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+        .story-card.my-uploaded-story .story-plus-icon { display: none; }
+        .story-card.my-uploaded-story .story-image {
+            height: 100%; position: absolute; border-radius: 10px;
+        }
+        
+        .story-card p {
+            position: absolute; bottom: 5px; left: 0; width: 100%; text-align: center;
+            color: white; font-size: 12px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            padding: 0 5px; margin: 0; z-index: 5; /* Increased Z-index */
+        }
+        
+        /* ⭐ LOGO/PROFILE PHOTO FOR STORY SHAREER ⭐ */
+        .story-card .story-profile-icon {
+            position: absolute; top: 10px; left: 10px; 
+            width: 30px; height: 30px;
+            border-radius: 50%; object-fit: cover; 
+            border: 3px solid #1877F2; 
+            z-index: 5; /* Increased Z-index */
+            background-color: white; /* Ensure it looks clean */
+        }
+        .story-card.viewed .story-profile-icon { border: 3px solid #ccc; }
+
+        /* Story View Modal Styles */
+        #storyViewModal {
+            display: flex; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(0, 0, 0, 0.9); justify-content: center; align-items: center;
+        }
+        .story-viewer-content {
+            width: 90%; max-width: 400px; height: 90%; max-height: 700px; position: relative; 
+            border-radius: 15px; overflow: hidden; background-color: black;
+        }
+        .story-media-display {
+            width: 100%; height: 100%; object-fit: contain; position: absolute;
+        }
+        .story-overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 5;
+            padding: 15px; color: white;
+            /* Gradient for better text visibility */
+            background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.4) 100%);
+        }
+        .story-header-info {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .story-header-info img {
+            width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; border: 2px solid white;
+        }
+        
+        /* ⭐ NEW STYLES FOR BOTTOM ACTION BAR ⭐ */
+        .story-bottom-bar {
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            z-index: 10;
+            display: flex;
+            flex-direction: column; /* Stack view count and buttons */
+            align-items: center;
+            padding: 10px 0;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent bar at the bottom */
+        }
+        .view-count-badge {
+            background-color: rgba(255, 255, 255, 0.2); /* Light background for visibility */
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px; /* Space between view count and buttons */
+            cursor: pointer;
+        }
+        .story-viewer-buttons-row {
+            display: flex;
+            gap: 10px;
+            width: 90%;
+            justify-content: center;
+        }
+        .story-viewer-buttons-row button {
+            background-color: rgba(255, 255, 255, 0.2); 
+            color: white; 
+            border: none;
+            padding: 8px 15px; 
+            border-radius: 20px; 
+            font-size: 14px; 
+            cursor: pointer;
+            width: auto;
+            flex-grow: 1; /* Allow buttons to expand */
+        }
+        /* ⭐ END NEW STYLES ⭐ */
+
+        /* LOGIN / SIGNUP STYLE */
+        .auth-container {
+            display: flex; justify-content: center; align-items: flex-start; 
+            padding-top: 15vh; min-height: 100vh; background-color: #f0f2f5; 
+        }
+        .login-box {
+            background-color: white; padding: 30px; border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+            width: 100%; max-width: 396px; text-align: center; margin: 0; 
+        }
+        .login-box::before {
+             content: "AKASH VS ANIKA"; display: block; font-size: 50px;
+             color: #4267B2; font-weight: bold; margin-bottom: 20px; text-align: center;
+        }
+        .login-box h2 { display: none; }
+        .login-box input[type="text"], .login-box input[type="password"], .login-box input[type="tel"] {
+            width: 90%; padding: 12px 10px; margin-bottom: 15px;
+            border: 1px solid #ddd; border-radius: 6px; font-size: 16px;
+        }
+        .login-box .phone-otp-group {
+             display: flex; gap: 5px; align-items: center; width: 100%; margin-bottom: 15px;
+        }
+        .login-box .phone-otp-group input {
+            flex-grow: 1; margin: 0;
+        }
+        .login-box .phone-otp-group button {
+            padding: 12px 10px; width: auto; font-size: 14px;
+            background-color: #4267B2; color: white; border: none; border-radius: 6px;
+            cursor: pointer; font-weight: bold;
+        }
+        .login-box button {
+            width: 100%; padding: 12px; border: none; border-radius: 6px;
+            cursor: pointer; font-size: 18px; font-weight: bold; transition: background-color 0.2s;
+        }
+        .login-box .login-button { background-color: #1877F2; color: white; margin-bottom: 10px; }
+        .login-box .signup-button {
+            background-color: #42b72a; color: white; margin-top: 15px; padding: 15px; font-size: 16px;
+        }
+        .login-box .toggle-button {
+            background: none; color: #1877F2; padding: 5px 0; font-size: 14px;
+            font-weight: normal; text-align: center; width: auto; display: block; 
+        }
+        .error-message {
+            color: #D9534F; margin-bottom: 15px; font-weight: bold; display: none;
+        }
+        
+        .content-hidden { display: none !important; }
+
+        /* ADMIN DASHBOARD CSS */
+        .admin-user-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px; border-bottom: 1px solid #eee; background-color: white;
+            margin-bottom: 5px; border-radius: 4px;
+        }
+        .admin-user-info {
+            display: flex; flex-direction: column;
+            flex-grow: 1;
+        }
+        .admin-user-info strong { font-size: 16px; color: #1c1e21; }
+        .admin-user-info span { font-size: 12px; color: #606770; }
+        .admin-action-btn {
+            padding: 8px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        .admin-suspend-btn { background-color: #dc3545; color: white; }
+        .admin-unsuspend-btn { background-color: #28a745; color: white; }
+        .admin-suspend-btn:disabled { background-color: #adb5bd; cursor: not-allowed; }
+        
+        /* ⭐ NAME CHANGE MODAL STYLES ⭐ */
+        .name-change-group {
+             width: 100%; margin: 10px 0;
+        }
+        .name-change-group label {
+             display: block; font-weight: bold; margin-bottom: 5px; color: #1c1e21;
+        }
+        
+        /* 🚨 NEW: Disabled Button Style */
+        #shareReelButton:disabled {
+            background-color: #adb5bd !important; /* Grey color when disabled */
+            cursor: not-allowed;
+        }
+        
+        /* --- NEW CALL BUTTON STYLES FOR MESSAGE SECTION --- */
+        .chat-header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .call-button {
+            background: none;
+            border: none;
+            color: #4267B2; /* Facebook Blue */
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+        .call-button:hover {
+            background-color: #e4e6eb;
+        }
+        .call-button i {
+            /* Icon size */
+            width: 24px; 
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        /* --- END NEW CALL BUTTON STYLES --- */
+    </style>
+</head>
+<body>
+    
+    <div id="loginSignupSection" class="auth-container content-section">
+        <div class="login-box">
+            <h2 id="authHeading">👋 AKASH VS ANIKA में लॉग इन करें</h2>
+            <div id="errorMessage" class="error-message"></div>
+            
+            <div id="passwordAuthFields">
+                <input type="text" id="authEmail" placeholder="ईमेल या फ़ोन नंबर" required>
+                <input type="password" id="authPassword" placeholder="पासवर्ड" required>
+                <input type="text" id="authFirstName" placeholder="पहला नाम (साइनअप के लिए)" style="display:none;">
+                <input type="text" id="authMiddleName" placeholder="मध्य नाम (वैकल्पिक)" style="display:none;">
+                <input type="text" id="authLastName" placeholder="अंतिम नाम (साइनअप के लिए)" style="display:none;">
+                
+                <button id="mainAuthButton" class="login-button" onclick="handleAuth('login')">लॉग इन करें</button>
+                <button class="toggle-button" onclick="toggleAuthMode()">अकाउंट नहीं है? साइन अप करें</button>
+            </div>
+            
+            <div id="otpAuthFields" style="display:none;">
+                <input type="text" id="otpAuthName" placeholder="आपका नाम" required>
+                <div class="phone-otp-group">
+                    <input type="tel" id="authPhone" placeholder="10 अंकों का फ़ोन नंबर" maxlength="10" pattern="[0-9]{10}" required>
+                    <button id="sendOtpButton" onclick="sendOtp()" style="width: 120px;">OTP भेजें</button>
+                </div>
+                <input type="text" id="authOtp" placeholder="OTP दर्ज करें (4-अंक)" maxlength="4" pattern="[0-9]{4}" required style="display:none;">
+                
+                <button id="verifyOtpButton" class="login-button" onclick="handleAuthWithOtp('verify')" style="display:none;">OTP वेरीफाई करें</button>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0;">
+            
+            <button class="signup-button" onclick="toggleOtpMode()">
+                <span id="otpToggleText">📞 OTP से अकाउंट बनाएं</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="header content-hidden">
+        <h1>AKASH VS ANIKA</h1>
+        <div class="header-nav-links">
+            <a href="#" onclick="showSection('feedSection')" class="active">**🏠 होम**</a>
+            <a href="#" onclick="showSection('reelsSection')">**🎬 रील्स**</a> 
+            <a href="#" onclick="showSection('profileSection')">प्रोफाइल</a>
+            <a href="#" onclick="showSection('reportProblemSection')">🚨 रिपोर्ट</a>
+            <a href="#" onclick="refreshPage()" style="margin-left: 20px;">🔄 **Refresh**</a> 
+        </div>
+        
+        <div class="settings-menu-container">
+            <!-- ⭐ MODIFIED: Onclick changed to openFullScreenMenu() instead of toggleSettingsMenu() ⭐ -->
+            <span class="menu-icon" style="color: white;" onclick="openFullScreenMenu()">☰</span>
+            
+            <!-- Old Dropdown (Kept but hidden by new function) -->
+            <div id="settingsDropdown" class="settings-dropdown">
+                <a href="#" class="dropdown-item" onclick="showSection('feedSection'); toggleSettingsMenu()">
+                    <span class="dropdown-icon">🏠</span> होम (फ़ीड)
+                </a>
+                <a href="#" class="dropdown-item" onclick="showSection('profileSection'); toggleSettingsMenu()">
+                    <span class="dropdown-icon">👤</span> आपका प्रोफाइल देखें
+                </a>
+                <a href="#" class="dropdown-item" onclick="openNameChangeModalWithPasswordCheck(); toggleSettingsMenu()">
+                    <span class="dropdown-icon">📝</span> **नाम एडिट करें**
+                </a>
+                <hr style="border: 0; border-top: 5px solid #eee; margin: 10px 0;">
+                <span class="dropdown-item" style="color: #4267B2; font-weight: bold; background-color: #f0f2f5;">⚙️ अकाउंट सेटिंग्स</span>
+                <a href="#" class="dropdown-item" onclick="alert('Demo: Security Settings Page'); toggleSettingsMenu()">
+                    <span class="dropdown-icon">🔒</span> सुरक्षा और लॉगिन
+                </a>
+                <a href="#" class="dropdown-item" onclick="alert('Demo: Privacy Settings Page'); toggleSettingsMenu()">
+                    <span class="dropdown-icon">👁️‍🗨️</span> प्राइवेसी सेटिंग्स
+                </a>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 5px 0;">
+                <a href="#" class="dropdown-item" onclick="showSection('messageSection'); toggleSettingsMenu()">
+                    <span class="dropdown-icon">💬</span> मैसेजेस
+                </a>
+                <a href="#" class="dropdown-item" onclick="showSection('notificationSection'); toggleSettingsMenu()">
+                    <span class="dropdown-icon">🔔</span> सूचनाएं
+                </a>
+                <a href="#" class="dropdown-item" onclick="showSection('reelsSection'); toggleSettingsMenu()">
+                    <span class="dropdown-icon">🎬</span> **रील्स देखें/अपलोड करें**
+                </a>
+                <a href="#" class="dropdown-item" onclick="showSection('friendsSection'); toggleSettingsMenu()">
+                    <span class="dropdown-icon">👥</span> **फ्रेंड्स**
+                </a>
+                <a href="#" class="dropdown-item" onclick="showSection('groupsSection'); toggleSettingsMenu()">
+                    <span class="dropdown-icon">🏘️</span> **ग्रुप्स**
+                </a>
+                <a href="#" class="dropdown-item admin-only-item" onclick="showSection('adminControlSection'); toggleSettingsMenu()">
+                    <span class="dropdown-icon">👮</span> **एडमिन कंट्रोल**
+                </a>
+                <a href="#" class="dropdown-item" onclick="showSection('searchSection'); toggleSettingsMenu()">
+                    <span class="dropdown-icon">🔍</span> **खोज (Search)**
+                </a>
+                <hr style="border: 0; border-top: 5px solid #eee; margin: 10px 0;">
+                <span class="dropdown-item" style="color: #4267B2; font-weight: bold; background-color: #f0f2f5;">❓ हेल्प एंड सपोर्ट</span>
+                <a href="#" class="dropdown-item" onclick="showSection('reportProblemSection'); toggleSettingsMenu()">
+                    <span class="dropdown-icon">🚨</span> समस्या रिपोर्ट करें
+                </a>
+                <a href="#" class="dropdown-item" onclick="alert('Demo: Welcome to the Help Centre! Here you can find articles and FAQs.'); toggleSettingsMenu()">
+                    <span class="dropdown-icon">📚</span> **हेल्प सेंटर**
+                </a>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 5px 0;">
+                <a href="#" class="dropdown-item" onclick="refreshPage(); toggleSettingsMenu()">
+                    <span class="dropdown-icon">🔄</span> **पेज रीलोड करें**
+                </a>
+                <a href="#" class="dropdown-item" onclick="logoutUser(); toggleSettingsMenu()">
+                    <span class="dropdown-icon" style="color: #D9534F;">🚪</span> लॉग आउट
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-wrapper content-hidden">
+        
+        <div id="sidebar" class="sidebar">
+            <div class="sidebar-profile sidebar-item" onclick="showSection('profileSection')">
+                <img id="sidebarProfilePhoto" src="https://via.placeholder.com/40/FFCC00/000000?text=U" alt="प्रोफाइल">
+                <span id="sidebarUserName">आपका नाम</span>
+            </div>
+            
+            <a href="#" class="sidebar-item" onclick="showSection('feedSection')"><span class="sidebar-icon">🏠</span><span>होम</span></a>
+            <a href="#" class="sidebar-item" onclick="showSection('feedSection')"><span class="sidebar-icon">📰</span><span>न्यूज़ फ़ीड</span></a>
+            <a href="#" class="sidebar-item" onclick="showSection('messageSection')"><span class="sidebar-icon">💬</span><span>मैसेजेस</span></a>
+            <a href="#" class="sidebar-item" onclick="showSection('notificationSection')"><span class="sidebar-icon">🔔</span><span>सूचनाएं</span></a>
+            <hr style="border: 0; border-top: 1px solid #ddd; margin: 10px 0;">
+            <a href="#" class="sidebar-item" onclick="showSection('reelsSection')"><span class="sidebar-icon">🎬</span><span>**रील्स देखें**</span></a>
+            <a href="#" class="sidebar-item" onclick="showSection('friendsSection')"><span class="sidebar-icon">👥</span><span>**फ्रेंड्स**</span></a>
+            <a href="#" class="sidebar-item" onclick="showSection('groupsSection')"><span class="sidebar-icon">🏘️</span><span>**ग्रुप्स**</span></a>
+            
+            <a href="#" class="sidebar-item admin-only-item" onclick="showSection('adminControlSection')">
+                <span class="sidebar-icon">👮</span><span>**एडमिन कंट्रोल**</span>
+            </a>
+            
+            <a href="#" class="sidebar-item" onclick="showSection('searchSection')"><span class="sidebar-icon">🔍</span><span>**खोज**</span></a>
+            <a href="#" class="sidebar-item" onclick="showSection('reportProblemSection')"><span class="sidebar-icon">🚨</span><span>समस्या रिपोर्ट करें</span></a>
+        </div>
+        <div class="content-container">
+            
+            <div id="ptrIndicator">
+                <div class="spinner"></div>
+            </div>
+            
+            <div id="feedSection" class="content-section active">
+                
+                <div class="ist-time-bar">
+                    🇮🇳 भारत Time: <span id="istTimeDisplay">...Loading...</span>
+                </div>
+                
+                <div class="stories-tray">
+                    <div id="myStoryCard" class="story-card add-story" onclick="document.getElementById('storyUploadInput').click()">
+                        <img id="myStoryPlaceholder" class="story-image" src="https://via.placeholder.com/100x100/f0f2f5/000000?text=+" alt="आप">
+                        <span class="story-plus-icon">+</span>
+                        <img id="myStoryProfileIcon" class="story-profile-icon" src="https://via.placeholder.com/30/FFCC00/000000?text=U" alt="प्रोफाइल">
+                        <p id="myStoryText" class="add-story-text" style="color: black; font-weight: 500; text-shadow: none; position: absolute; bottom: 10px;">Create story</p>
+                        <input type="file" id="storyUploadInput" accept="image/*,video/*" style="display: none;" onchange="uploadStory(event)">
+                    </div>
+                    <div id="dynamicStoriesContainer"></div>
+                </div>
+                
+                <div class="post-input-box">
+                    <textarea id="postText" placeholder="आप क्या सोच रहे हैं?" rows="3"></textarea>
+                    <input type="file" id="imageUploadInput" accept="image/*,video/*" style="display: none;" onchange="previewImage(event)">
+                    <div id="imagePreviewContainer">
+                         <img id="imagePreview" src="" alt="चुना गया मीडिया" style="display: none;">
+                         <video id="videoPreview" controls style="display: none; max-width: 100%; max-height: 150px; border-radius: 4px; margin-bottom: 5px;"></video>
+                         <p id="previewText" style="font-size: 12px; color: #666; margin: 5px 0 0 0;">कोई मीडिया नहीं चुना गया।</p>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                        <button onclick="document.getElementById('imageUploadInput').click()" style="background-color: #42b72a; padding: 8px 15px;">🖼️ फोटो/वीडियो चुनें</button>
+                        <button onclick="addPost()">पोस्ट करें</button>
+                    </div>
+                </div>
+                <div id="postFeed"></div>
+            </div>
+            
+            <div id="reelsSection" class="content-section">
+                <h2 style="text-align: center; color: #4267B2; margin-bottom: 20px;">🎬 शॉर्ट रील्स फ़ीड और अपलोड</h2>
+                <div class="post-input-box" style="text-align: center; margin-bottom: 30px;">
+                    <h3 style="margin-top: 0; color: #4267B2;">अपनी Reel अपलोड करें</h3>
+                    <input type="file" id="reelFileInput" accept="video/*" style="display: none;" onchange="previewReel(event)">
+                    <button onclick="document.getElementById('reelFileInput').click();" style="background-color: #f030a3; color: white; padding: 10px 25px; margin-right: 10px;">▶️ गैलरी से Reel चुनें</button>
+                    <button id="shareReelButton" onclick="addReelToFeed()" style="background-color: #42b72a; color: white; padding: 10px 25px;" disabled>🔗 Reel शेयर करें</button>
+                    <div id="reelPreviewContainer" style="display: none; margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
+                        <video id="reelPreviewVideo" controls style="width: 100%; border-radius: 6px; max-height: 400px; display: none;"></video>
+                        <textarea id="reelCaption" placeholder="Reel के लिए कैप्शन लिखें..." rows="2" style="width: 95%; margin-top: 10px;"></textarea>
+                    </div>
+                </div>
+                <div id="reelsFeed" style="display: flex; flex-direction: column; align-items: center; gap: 20px;"></div>
+            </div>
+            
+            <div id="adminControlSection" class="content-section">
+                <h2 style="text-align: center; color: #dc3545; margin-bottom: 20px;">👮 एडमिन कंट्रोल डैशबोर्ड</h2>
+                <div style="background-color: #ffe0e6; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <p style="margin: 0; color: #dc3545; font-weight: bold;">⚠️ यह सेक्शन केवल **एडमिन यूज़र** (Admin Email: **admin@admin.com**) के लिए है।</p>
+                </div>
+                <div id="adminUserList" style="background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">
+                    <h3 style="margin-top: 0; border-bottom: 2px solid #dc3545; padding-bottom: 10px;">पंजीकृत यूज़र (Registered Users)</h3>
+                    <div style="text-align: center; color: #666; padding: 20px;">यूज़र लिस्ट लोड हो रही है...</div>
+                </div>
+            </div>
+
+            <div id="profileSection" class="content-section">
+                <div class="profile-info">
+                    <div id="coverPhotoContainer" class="cover-photo-container">
+                        <button class="cover-photo-button" onclick="document.getElementById('coverPhotoInput').click();">🖼️ कवर फोटो अपलोड करें</button>
+                        <input type="file" id="coverPhotoInput" accept="image/*" onchange="changeCoverPhoto(event)">
+                    </div>
+                    <div class="profile-photo-wrapper" onclick="document.getElementById('photoUploadInput').click();">
+                        <img id="profilePhoto" src="https://via.placeholder.com/170/FFCC00/000000?text=U+P" alt="प्रोफाइल फोटो">
+                        <input type="file" id="photoUploadInput" accept="image/*" onchange="changeProfilePhoto(event)">
+                    </div>
+                    <div class="user-details">
+                        <h2><span id="userNameDisplay">आपका नाम</span> (यूज़रनेम)</h2> 
+                        <p style="color: #666;">@mera_profile</p>
+                        <div style="margin-top: 20px;">
+                            <button style="background-color: #1877F2; color: white; padding: 10px 25px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="openNameChangeModalWithPasswordCheck()">✏️ नाम एडिट करें</button>
+                            <button style="background-color: #e4e6eb; color: #000; padding: 10px 25px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="showSection('messageSection')">💬 मैसेज भेजें</button>
+                        </div>
+                    </div>
+                    <div class="profile-tabs">
+                        <button id="tabPostsButton" class="profile-tab-button active" onclick="showProfileTab('posts')">🖼️ पोस्ट्स</button>
+                        <button id="tabReelsButton" class="profile-tab-button" onclick="showProfileTab('reels')">🎬 रील्स</button>
+                    </div>
+                    <div id="profileContentArea">
+                        <div id="tabContentPosts" class="tab-content active"></div>
+                        <div id="tabContentReels" class="tab-content"></div>
+                    </div>
+                </div>
+            </div>
+<div id="messageSection" class="content-section" style="padding: 0; overflow: hidden; height: calc(100vh - 60px);">
+    <iframe src="messenger.html" style="width: 100%; height: 100%; border: none;"></iframe>
+</div>
+
+            <div id="notificationSection" class="content-section">
+                <h2 style="text-align: center; color: #4267B2;">🔔 सूचनाएं</h2>
+                <div style="background-color: white; padding: 20px; border-radius: 8px;">
+                    <p>कोई नई सूचना नहीं।</p>
+                </div>
+            </div>
+            <div id="friendsSection" class="content-section">
+                <h2 style="text-align: center; color: #4267B2;">👥 फ्रेंड्स</h2>
+                <div class="card-list">
+                     <div class="user-card"><div class="user-card-info"><img src="https://via.placeholder.com/60" alt=""><div><h4>Amit</h4><p>Friend</p></div></div><button class="card-button">Add</button></div>
+                </div>
+            </div>
+            <div id="groupsSection" class="content-section">
+                <h2 style="text-align: center; color: #4267B2;">🏘️ ग्रुप्स</h2>
+            </div>
+            <div id="searchSection" class="content-section">
+                <h2 style="text-align: center; color: #4267B2;">🔍 खोजें</h2>
+                <input type="text" id="searchInput" placeholder="Search..." style="width:100%; padding:10px;">
+                <button onclick="performSearch()" style="width:100%; padding:10px; margin-top:10px; background:#4267B2; color:white; border:none;">Search</button>
+                <div id="searchResults" style="margin-top:10px;"></div>
+            </div>
+            <div id="reportProblemSection" class="content-section">
+                <h2 style="text-align: center; color: #D9534F;">🚨 रिपोर्ट करें</h2>
+                <div class="report-form">
+                    <input type="text" id="reportSubject" placeholder="Subject">
+                    <textarea id="reportDescription" placeholder="Description" rows="5"></textarea>
+                    <button onclick="submitReport()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div> 
+    
+    <!-- ⭐ FACEBOOK STYLE FULL SCREEN MENU HTML ⭐ -->
+    <div id="fbFullScreenMenu" class="fb-full-menu">
+        <div class="fb-menu-header">
+            <span class="fb-menu-title">Menu</span>
+            <div class="fb-close-btn" onclick="closeFullScreenMenu()">&times;</div>
+        </div>
+        
+        <!-- Profile Card -->
+        <div class="fb-menu-profile" onclick="menuAction(() => showSection('profileSection'))">
+            <img id="fbMenuUserPhoto" src="https://via.placeholder.com/40" alt="">
+            <div>
+                <div id="fbMenuUserName" style="font-weight:bold; font-size:18px;">User</div>
+                <div style="color:#65676b; font-size:14px;">See your profile</div>
+            </div>
+        </div>
+        
+        <div style="padding: 0 15px; font-weight:bold; color:#65676b; margin-bottom:10px;">All Shortcuts</div>
+        
+        <div class="fb-menu-grid">
+            <!-- All items from original dropdown + more -->
+            <div class="fb-menu-card" onclick="menuAction(() => showSection('feedSection'))">
+                <span class="fb-menu-icon">🏠</span> Home
+            </div>
+            <div class="fb-menu-card" onclick="menuAction(() => showSection('reelsSection'))">
+                <span class="fb-menu-icon">🎬</span> Reels
+            </div>
+            <div class="fb-menu-card" onclick="menuAction(() => showSection('friendsSection'))">
+                <span class="fb-menu-icon">👥</span> Friends
+            </div>
+            <div class="fb-menu-card" onclick="menuAction(() => showSection('groupsSection'))">
+                <span class="fb-menu-icon">🏘️</span> Groups
+            </div>
+            <div class="fb-menu-card" onclick="menuAction(() => showSection('messageSection'))">
+                <span class="fb-menu-icon">💬</span> Messages
+            </div>
+            <div class="fb-menu-card" onclick="menuAction(() => showSection('notificationSection'))">
+                <span class="fb-menu-icon">🔔</span> Notifications
+            </div>
+            <div class="fb-menu-card" onclick="menuAction(() => openNameChangeModalWithPasswordCheck())">
+                <span class="fb-menu-icon">📝</span> Edit Name
+            </div>
+            <div class="fb-menu-card admin-only-item" onclick="menuAction(() => showSection('adminControlSection'))">
+                <span class="fb-menu-icon" style="color:red;">👮</span> Admin
+            </div>
+            <div class="fb-menu-card" onclick="menuAction(() => showSection('searchSection'))">
+                <span class="fb-menu-icon">🔍</span> Search
+            </div>
+            <div class="fb-menu-card" onclick="menuAction(() => showSection('reportProblemSection'))">
+                <span class="fb-menu-icon" style="color:orange;">🚨</span> Report
+            </div>
+            <div class="fb-menu-card" onclick="menuAction(() => refreshPage())">
+                <span class="fb-menu-icon">🔄</span> Reload
+            </div>
+        </div>
+        
+        <div class="fb-logout-btn" onclick="logoutUser()">Log Out</div>
+    </div>
+    <!-- ⭐ END MENU HTML ⭐ -->
+    
+    <div id="passwordCheckModal" style="display:none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center;">
+        <div style="background-color: #fefefe; padding: 25px; border: 1px solid #888; width: 80%; max-width: 350px; border-radius: 8px;">
+            <span onclick="closePasswordCheckModal()" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            <h3 style="color: #D9534F; margin-top: 0;">🔒 सुरक्षा जांच</h3>
+            <p style="margin-bottom: 15px;">नाम बदलने से पहले, कृपया अपना **पुराना पासवर्ड** दर्ज करें:</p>
+            <input type="password" id="oldPasswordInput" placeholder="पुराना पासवर्ड" style="width: 95%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px;">
+            <p id="passwordCheckMessage" style="color: red; margin: 10px 0; display: none; font-weight: bold;"></p>
+            <button onclick="checkOldPasswordAndOpenNameChange()" style="width: 100%; padding: 12px; background-color: #D9534F; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">वेरीफाई करें</button>
+        </div>
+    </div>
+    
+    <div id="nameChangeModal" style="display:none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
+        <div style="background-color: #fefefe; margin: 15% auto; padding: 25px; border: 1px solid #888; width: 80%; max-width: 400px; border-radius: 8px;">
+            <span onclick="closeModal()" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            <h3 style="color: #4267B2;">👤 नाम बदलें</h3>
+            
+            <div class="name-change-group">
+                <label for="firstNameInput">पहला नाम (First Name)</label>
+                <input type="text" id="firstNameInput" placeholder="पहला नाम" style="width: 95%; padding: 10px;">
+            </div>
+            
+            <div class="name-change-group">
+                <label for="middleNameInput">मध्य नाम (Middle Name - Optional)</label>
+                <input type="text" id="middleNameInput" placeholder="मध्य नाम" style="width: 95%; padding: 10px;">
+            </div>
+
+            <div class="name-change-group">
+                <label for="lastNameInput">अंतिम नाम (Last Name)</label>
+                <input type="text" id="lastNameInput" placeholder="अंतिम नाम" style="width: 95%; padding: 10px;">
+            </div>
+            
+            <p id="nameChangeMessage" style="color: red; margin: 10px 0; display: none;"></p>
+
+            <button onclick="updateUserName()" style="width: 100%; padding: 10px; background-color: #42b72a; color: white; border: none;">नाम सेव करें</button>
+        </div>
+    </div>
+    <div id="storyViewModal" style="display: none;">
+        <div class="story-viewer-content">
+            <span class="close-story-button" onclick="closeStoryModal()" style="position: absolute; top: 15px; right: 15px; color: white; font-size: 30px; cursor: pointer; z-index: 10;">&times;</span>
+            
+            <button id="prevStoryButton" class="story-nav-button" onclick="navigateStory(-1)" style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); color: white; background: none; border: none; font-size: 40px; z-index: 10; padding: 20px;">&#10094;</button>
+            <button id="nextStoryButton" class="story-nav-button" onclick="navigateStory(1)" style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); color: white; background: none; border: none; font-size: 40px; z-index: 10; padding: 20px;">&#10095;</button>
+
+            <div id="currentStoryMediaContainer" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
+                </div>
+
+            <div class="story-overlay">
+                <div class="story-header-info">
+                    <div style="display: flex; align-items: center;">
+                        <img id="storyViewerProfile" src="" alt="Profile">
+                        <strong id="storyUserText"></strong>
+                    </div>
+                    </div>
+            </div>
+            
+            <div class="story-bottom-bar">
+                 <div id="storyViewCount" class="view-count-badge" onclick="alert('Viewing audience list... (Demo)')">
+                    👁️ 0
+                 </div>
+                 
+                 <div class="story-viewer-buttons-row">
+                     <button id="deleteStoryButton" onclick="deleteMyStory()" style="display:none; background-color: #dc3545;">❌ कट करें</button>
+                     <button id="sendMessageButton" onclick="sendStoryMessage()" style="background-color: #1877F2;">💬 **संदेश भेजें**</button>
+                 </div>
+            </div>
+            </div>
+    </div>
+    <script>
+        // --- CONSTANTS & CONFIG ---
+        const IS_LOGGED_IN_KEY = 'isUserLoggedIn';
+        const AUTH_USER_KEY = 'authUserCredentials';
+        const ADMIN_EMAIL = 'admin@admin.com'; 
+        const LOGGED_IN_EMAIL_KEY = 'loggedInUserEmail'; 
+        // 🚨 MODIFIED: Storing full name as object, not just a string
+        const USER_NAME_KEY = 'socialPlatformUserNameObject'; 
+        const POSTS_STORAGE_KEY = 'mySocialPlatformPosts';
+        const REELS_STORAGE_KEY = 'mySocialPlatformReels';
+        const STORIES_STORAGE_KEY = 'mySocialPlatformStories';
+        const MY_STORY_ID = 'story-my-current-collection'; 
+        const COMMENTS_STORAGE_KEY = 'mySocialPlatformComments';
+        const USER_PROFILE_PHOTO_KEY = 'userProfilePhoto'; 
+        // ⭐ NEW KEY FOR LIKES AND SHARED POSTS LIST
+        const LIKES_STORAGE_KEY = 'mySocialPlatformLikes';
+        const SHARED_POSTS_STORAGE_KEY = 'mySocialPlatformSharedPosts'; // To track who shared what.
+
+        // --- STATE VARIABLES ---
+        let currentAuthMode = 'login';
+        let isOtpMode = false; 
+        let currentLoggedInUserEmail = null; 
+        let simulatedOtp = null; 
+        let selectedMediaURL = null; 
+        let selectedMediaType = null;
+        let selectedReelURL = null; // Stays null until a file is selected
+        let currentStoryCollectionId = null;
+        let currentStoryList = [];
+        let currentStoryIndex = 0;
+        
+        // 🚨 NEW PULL-TO-REFRESH STATE VARIABLES
+        let isRefreshing = false;
+        let startY = 0;
+        const REFRESH_THRESHOLD = 80; // pixels to pull to trigger refresh
+        const ptrIndicator = document.getElementById('ptrIndicator');
+        const feedContainer = document.getElementById('feedSection'); // The scrollable element
+        
+        // Dummy Profile Photos for demo users
+        const DEMO_PROFILE_PHOTOS = {
+             'Prie Prince': 'https://via.placeholder.com/30/42b72a/FFFFFF?text=P',
+             'Anika Queen': 'https://via.placeholder.com/30/f030a3/FFFFFF?text=A',
+             'Akash': 'https://via.placeholder.com/30/1877F2/FFFFFF?text=K'
+        };
+        
+        // ⭐ EMOJI LIST ⭐
+        const EMOJI_REACTIONS = ['🥰', '🥺', '🫣', '🤣', '🙄'];
+
+
+        // --- AUTHENTICATION FUNCTIONS (RESTORED) ---
+        
+        function toggleAuthMode() {
+            const authHeading = document.getElementById('authHeading');
+            const authFirstNameInput = document.getElementById('authFirstName');
+            const authMiddleNameInput = document.getElementById('authMiddleName');
+            const authLastNameInput = document.getElementById('authLastName');
+            const mainAuthButton = document.getElementById('mainAuthButton');
+            const toggleButton = document.querySelector('.toggle-button');
+            const errorMessage = document.getElementById('errorMessage');
+
+            if(errorMessage) errorMessage.style.display = 'none';
+
+            if (currentAuthMode === 'login') {
+                currentAuthMode = 'signup';
+                authHeading.textContent = '📝 नया अकाउंट बनाएं';
+                authFirstNameInput.style.display = 'block';
+                authMiddleNameInput.style.display = 'block';
+                authLastNameInput.style.display = 'block';
+                mainAuthButton.textContent = 'साइन अप करें';
+                mainAuthButton.setAttribute('onclick', "handleAuth('signup')");
+                toggleButton.textContent = 'पहले से अकाउंट है? लॉग इन करें';
+            } else {
+                currentAuthMode = 'login';
+                authHeading.textContent = '👋 AKASH VS ANIKA में लॉग इन करें';
+                authFirstNameInput.style.display = 'none';
+                authMiddleNameInput.style.display = 'none';
+                authLastNameInput.style.display = 'none';
+                mainAuthButton.textContent = 'लॉग इन करें';
+                mainAuthButton.setAttribute('onclick', "handleAuth('login')");
+                toggleButton.textContent = 'अकाउंट नहीं है? साइन अप करें';
+            }
+        }
+
+        function toggleOtpMode() {
+            isOtpMode = !isOtpMode;
+            const passwordFields = document.getElementById('passwordAuthFields');
+            const otpFields = document.getElementById('otpAuthFields');
+            const otpToggleText = document.getElementById('otpToggleText');
+
+            if (isOtpMode) {
+                passwordFields.style.display = 'none';
+                otpFields.style.display = 'block';
+                otpToggleText.textContent = '🔑 ईमेल/पासवर्ड से अकाउंट बनाएं';
+                document.getElementById('authHeading').textContent = '📞 OTP से लॉगिन/साइनअप';
+            } else {
+                passwordFields.style.display = 'block';
+                otpFields.style.display = 'none';
+                otpToggleText.textContent = '📞 OTP से अकाउंट बनाएं / लॉगिन करें';
+                document.getElementById('authHeading').textContent = '👋 AKASH VS ANIKA में लॉग इन करें';
+            }
+        }
+
+        function handleAuth(mode) {
+            const email = document.getElementById('authEmail').value.trim().toLowerCase();
+            const password = document.getElementById('authPassword').value;
+            const firstName = document.getElementById('authFirstName').value.trim();
+            const middleName = document.getElementById('authMiddleName').value.trim();
+            const lastName = document.getElementById('authLastName').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+
+            errorMessage.style.display = 'none';
+
+            if (email === "" || password === "") {
+                errorMessage.textContent = 'ईमेल और पासवर्ड आवश्यक हैं!';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            let savedCredentials = JSON.parse(localStorage.getItem(AUTH_USER_KEY) || '[]');
+            let userFound = savedCredentials.find(u => u.email === email);
+            
+            // Function to generate full name string
+            const getFullName = (f, m, l) => [f, m, l].filter(n => n).join(' ');
+
+            if (mode === 'signup') {
+                if (firstName === "" || lastName === "") {
+                     errorMessage.textContent = 'पहला नाम और अंतिम नाम आवश्यक हैं!';
+                     errorMessage.style.display = 'block';
+                     return;
+                }
+                if (userFound) {
+                    errorMessage.textContent = 'यह ईमेल पहले से रजिस्टर्ड है। लॉग इन करें।';
+                    errorMessage.style.display = 'block';
+                } else {
+                    const fullName = getFullName(firstName, middleName, lastName);
+                    const photo = DEMO_PROFILE_PHOTOS[fullName] || `https://via.placeholder.com/30/D9534F/FFFFFF?text=${firstName.charAt(0)}`; 
+
+                    const newUser = { 
+                        email, password, name: fullName, 
+                        firstName, middleName, lastName, // Save components separately
+                        isSuspended: false, photo: photo 
+                    }; 
+                    savedCredentials.push(newUser);
+                    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(savedCredentials));
+                    
+                    localStorage.setItem(USER_PROFILE_PHOTO_KEY, photo);
+                    
+                    // Save full name object
+                    localStorage.setItem(USER_NAME_KEY, JSON.stringify({ first: firstName, middle: middleName, last: lastName }));
+                    
+                    performLogin(email, fullName);
+                    alert(`🎉 साइनअप सफल! स्वागत है ${fullName}`);
+                }
+            } else if (mode === 'login') {
+                if (userFound && userFound.password === password) {
+                    if (userFound.isSuspended) { 
+                         errorMessage.textContent = '❌ अकाउंट सस्पेंड है।';
+                         errorMessage.style.display = 'block';
+                         return;
+                    }
+                    // Load user's profile photo and name object on login
+                    localStorage.setItem(USER_PROFILE_PHOTO_KEY, userFound.photo || `https://via.placeholder.com/30/FFCC00/000000?text=${userFound.name.charAt(0)}`);
+                    localStorage.setItem(USER_NAME_KEY, JSON.stringify({ 
+                         first: userFound.firstName || userFound.name.split(' ')[0], 
+                         middle: userFound.middleName || '', 
+                         last: userFound.lastName || userFound.name.split(' ').slice(-1)[0]
+                    }));
+                    
+                    performLogin(email, userFound.name);
+                    alert(`✅ लॉग इन सफल!`);
+                } else {
+                    errorMessage.textContent = 'गलत ईमेल या पासवर्ड।';
+                    errorMessage.style.display = 'block';
+                }
+            }
+        }
+
+        function sendOtp() {
+            const phone = document.getElementById('authPhone').value.trim();
+            const name = document.getElementById('otpAuthName').value.trim();
+            
+            if (phone.length !== 10) { alert('10 अंकों का नंबर डालें'); return; }
+            
+            simulatedOtp = Math.floor(1000 + Math.random() * 9000).toString(); 
+            document.getElementById('sendOtpButton').disabled = true;
+            document.getElementById('authOtp').style.display = 'block';
+            document.getElementById('verifyOtpButton').style.display = 'block';
+            
+            alert(`✅ OTP: ${simulatedOtp}`);
+        }
+
+        function handleAuthWithOtp(mode) {
+            const phone = document.getElementById('authPhone').value.trim();
+            const otp = document.getElementById('authOtp').value.trim();
+            const fullName = document.getElementById('otpAuthName').value.trim() || "User";
+            const firstName = fullName.split(' ')[0];
+            const lastName = fullName.split(' ').length > 1 ? fullName.split(' ').slice(-1)[0] : '';
+            const middleName = fullName.split(' ').length > 2 ? fullName.split(' ').slice(1, -1).join(' ') : '';
+
+            if (otp === simulatedOtp) {
+                let savedCredentials = JSON.parse(localStorage.getItem(AUTH_USER_KEY) || '[]');
+                let userFound = savedCredentials.find(u => u.email === phone);
+                
+                if(!userFound) {
+                    // New OTP user sign up
+                    const photo = `https://via.placeholder.com/30/4267B2/FFFFFF?text=${firstName.charAt(0)}`;
+                    const newUser = { 
+                        email: phone, password: 'OTP', name: fullName, 
+                        firstName, middleName, lastName, 
+                        isSuspended: false, photo: photo 
+                    };
+                    savedCredentials.push(newUser);
+                    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(savedCredentials));
+                    localStorage.setItem(USER_PROFILE_PHOTO_KEY, photo);
+                    localStorage.setItem(USER_NAME_KEY, JSON.stringify({ first: firstName, middle: middleName, last: lastName }));
+
+                } else {
+                    if(userFound.isSuspended) { alert('Suspended'); return; }
+                    localStorage.setItem(USER_PROFILE_PHOTO_KEY, userFound.photo);
+                    localStorage.setItem(USER_NAME_KEY, JSON.stringify({ 
+                         first: userFound.firstName || userFound.name.split(' ')[0], 
+                         middle: userFound.middleName || '', 
+                         last: userFound.lastName || userFound.name.split(' ').slice(-1)[0]
+                    }));
+                }
+                
+                performLogin(phone, fullName);
+                alert(`🎉 OTP वेरीफाई सफल!`);
+            } else {
+                alert('गलत OTP');
+            }
+        }
+
+        function performLogin(email, name) {
+            localStorage.setItem(IS_LOGGED_IN_KEY, 'true');
+            localStorage.setItem(LOGGED_IN_EMAIL_KEY, email);
+            currentLoggedInUserEmail = email;
+            
+            // UI Update
+            document.getElementById('loginSignupSection').classList.add('content-hidden');
+            document.querySelector('.header').classList.remove('content-hidden');
+            document.querySelector('.main-wrapper').classList.remove('content-hidden');
+            
+            initializeApp();
+        }
+
+        function logoutUser() {
+            localStorage.removeItem(IS_LOGGED_IN_KEY);
+            localStorage.removeItem(LOGGED_IN_EMAIL_KEY);
+            localStorage.removeItem(USER_PROFILE_PHOTO_KEY); // Clear photo on logout
+            location.reload(); 
+        }
+
+        function checkLoginStatus() {
+            if (localStorage.getItem(IS_LOGGED_IN_KEY) === 'true') {
+                currentLoggedInUserEmail = localStorage.getItem(LOGGED_IN_EMAIL_KEY);
+                document.getElementById('loginSignupSection').classList.add('content-hidden');
+                document.querySelector('.header').classList.remove('content-hidden');
+                document.querySelector('.main-wrapper').classList.remove('content-hidden');
+                initializeApp();
+            } else {
+                document.getElementById('loginSignupSection').classList.remove('content-hidden');
+            }
+        }
+
+        function initializeApp() {
+            loadUserName();
+            checkAdminStatus(); 
+            loadPosts();
+            loadReels();
+            updateISTTime();
+            loadProfilePhoto(); // Load photo first
+            loadStories(); // Load stories after photo
+            loadMyStory();
+            showProfileTab('posts');
+            
+            // 🚨 PULL-TO-REFRESH INIT
+            initPullToRefresh(); 
+            
+            // 🚨 Reel button initial state:
+            const shareReelButton = document.getElementById('shareReelButton');
+            if(shareReelButton) shareReelButton.disabled = true; // Set to disabled initially
+        }
+
+        // --- ADMIN FUNCTIONS ---
+        function checkAdminStatus() {
+            const adminItems = document.querySelectorAll('.admin-only-item');
+            if (currentLoggedInUserEmail === ADMIN_EMAIL) {
+                adminItems.forEach(item => item.style.setProperty('display', 'flex', 'important'));
+                loadAdminPanel();
+            } else {
+                adminItems.forEach(item => item.style.setProperty('display', 'none', 'important'));
+            }
+        }
+
+        function loadAdminPanel() {
+            const container = document.getElementById('adminUserList');
+            let users = JSON.parse(localStorage.getItem(AUTH_USER_KEY) || '[]');
+            let html = '<h3>Registered Users</h3>';
+            
+            users.forEach(u => {
+                if(u.email === ADMIN_EMAIL) return;
+                html += `
+                <div class="admin-user-row">
+                    <div class="admin-user-info"><strong>${u.name}</strong><br>${u.email}</div>
+                    <button class="admin-action-btn" style="background:${u.isSuspended?'green':'red'}" 
+                        onclick="toggleSuspend('${u.email}')">
+                        ${u.isSuspended ? 'Unsuspend' : 'Suspend'}
+                    </button>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function toggleSuspend(email) {
+            let users = JSON.parse(localStorage.getItem(AUTH_USER_KEY) || '[]');
+            let idx = users.findIndex(u => u.email === email);
+            if(idx > -1) {
+                users[idx].isSuspended = !users[idx].isSuspended;
+                localStorage.setItem(AUTH_USER_KEY, JSON.stringify(users));
+                loadAdminPanel();
+                alert('Status Updated');
+            }
+        }
+
+        function adminDelete(id, type) {
+            if(currentLoggedInUserEmail !== ADMIN_EMAIL) return;
+            if(confirm('Delete permanently?')) {
+                let key = type === 'post' ? POSTS_STORAGE_KEY : REELS_STORAGE_KEY;
+                let items = JSON.parse(localStorage.getItem(key) || '[]');
+                items = items.filter(i => i.id !== id);
+                localStorage.setItem(key, JSON.stringify(items));
+                if(type === 'post') loadPosts();
+                if(type === 'reel') loadReels();
+            }
+        }
+
+        // --- PULL-TO-REFRESH LOGIC ---
+        function initPullToRefresh() {
+            if (!feedContainer || !ptrIndicator) return;
+
+            feedContainer.addEventListener('touchstart', handleTouchStart);
+            feedContainer.addEventListener('touchmove', handleTouchMove);
+            feedContainer.addEventListener('touchend', handleTouchEnd);
+        }
+
+        function handleTouchStart(e) {
+            // केवल तब ट्रैक करें जब स्क्रॉल पोजीशन 0 हो (सबसे ऊपर)
+            if (feedContainer.scrollTop === 0) {
+                startY = e.touches ? e.touches[0].clientY : e.clientY;
+            }
+        }
+
+        function handleTouchMove(e) {
+            // अगर स्क्रॉल टॉप पर नहीं है, या पहले से रीफ़्रेश हो रहा है, तो बाहर निकलें
+            if (feedContainer.scrollTop !== 0 || isRefreshing) return;
+
+            const currentY = e.touches ? e.touches[0].clientY : e.clientY;
+            const distance = currentY - startY;
+
+            if (distance > 0) { // नीचे की ओर खींचना
+                e.preventDefault(); 
+                const pullDistance = Math.min(distance * 0.5, 100); 
+                
+                ptrIndicator.style.height = `${pullDistance}px`;
+                
+                if (pullDistance >= 10) {
+                    // 10px खींचने पर ही Spinner दिखाना शुरू करें
+                    ptrIndicator.querySelector('.spinner').style.display = 'block';
+                } else {
+                    ptrIndicator.querySelector('.spinner').style.display = 'none';
+                }
+            } else {
+                ptrIndicator.style.height = '0';
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (feedContainer.scrollTop !== 0 || isRefreshing) return;
+
+            const endY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+            const distance = endY - startY;
+            startY = 0; // Reset start position
+
+            if (distance > REFRESH_THRESHOLD) {
+                // रीफ़्रेश ट्रिगर करें
+                isRefreshing = true;
+                ptrIndicator.style.height = `${REFRESH_THRESHOLD}px`; // Lock height
+
+                // 2 सेकंड का सिमुलेटेड लोड टाइम
+                // loadPosts() को कॉल करते समय, यह रीफ़्रेश हो जाएगा और स्क्रॉल पोजीशन बनी रहेगी
+                setTimeout(() => {
+                    loadPosts();
+                    finishRefresh();
+                }, 2000); 
+
+            } else {
+                // रीसेट करें
+                finishRefresh();
+            }
+        }
+
+        function finishRefresh() {
+            isRefreshing = false;
+            ptrIndicator.style.height = '0';
+            ptrIndicator.querySelector('.spinner').style.display = 'none';
+        }
+
+        // --- MAIN APP LOGIC ---
+        
+        function showSection(id) {
+            if(id === 'adminControlSection' && currentLoggedInUserEmail !== ADMIN_EMAIL) { alert("Access Denied"); return; }
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.getElementById('settingsDropdown').classList.remove('open');
+            
+            // जब feedSection पर वापस आएं तो PTR इनिशियलाइज़ करें
+            if(id === 'feedSection') {
+                if(feedContainer) {
+                    feedContainer.scrollTop = 0; // फ़ीड पर आने पर टॉप पर जाएं
+                }
+            }
+        }
+        function toggleSettingsMenu() { document.getElementById('settingsDropdown').classList.toggle('open'); }
+        
+        // ⭐ NEW: OPEN PASSWORD CHECK MODAL FIRST ⭐
+        function openNameChangeModalWithPasswordCheck() {
+            document.getElementById('oldPasswordInput').value = '';
+            document.getElementById('passwordCheckMessage').style.display = 'none';
+            document.getElementById('passwordCheckModal').style.display = 'flex'; // Use flex for centering
+        }
+        
+        function closePasswordCheckModal() {
+            document.getElementById('passwordCheckModal').style.display = 'none';
+        }
+        
+        // ⭐ NEW: CHECK PASSWORD AND OPEN NAME CHANGE MODAL ⭐
+        function checkOldPasswordAndOpenNameChange() {
+            const oldPassword = document.getElementById('oldPasswordInput').value;
+            const messageElement = document.getElementById('passwordCheckMessage');
+            messageElement.style.display = 'none';
+            
+            let savedCredentials = JSON.parse(localStorage.getItem(AUTH_USER_KEY) || '[]');
+            let userFound = savedCredentials.find(u => u.email === currentLoggedInUserEmail);
+            
+            if (!userFound) {
+                messageElement.textContent = "यूज़र डेटा नहीं मिला।";
+                messageElement.style.display = 'block';
+                return;
+            }
+
+            if (userFound.password === oldPassword) {
+                closePasswordCheckModal(); // Close password check modal
+                
+                // Open the actual name change modal (original openModal logic)
+                const nameObj = JSON.parse(localStorage.getItem(USER_NAME_KEY) || '{}');
+                document.getElementById('firstNameInput').value = nameObj.first || '';
+                document.getElementById('middleNameInput').value = nameObj.middle || '';
+                document.getElementById('lastNameInput').value = nameObj.last || '';
+                document.getElementById('nameChangeModal').style.display = 'flex'; // Use flex for centering
+                document.getElementById('nameChangeMessage').style.display = 'none';
+                
+            } else {
+                messageElement.textContent = "❌ गलत पासवर्ड।";
+                messageElement.style.display = 'block';
+            }
+        }
+
+        function closeModal() { document.getElementById('nameChangeModal').style.display = 'none'; }
+        
+        // ⭐ MODIFIED updateUserName function ⭐
+        function updateUserName() {
+            const firstName = document.getElementById('firstNameInput').value.trim();
+            const middleName = document.getElementById('middleNameInput').value.trim();
+            const lastName = document.getElementById('lastNameInput').value.trim();
+            const messageElement = document.getElementById('nameChangeMessage');
+            
+            messageElement.style.display = 'none';
+            messageElement.style.color = 'red';
+
+            if(!firstName || !lastName) {
+                messageElement.textContent = "पहला नाम और अंतिम नाम खाली नहीं हो सकते।";
+                messageElement.style.display = 'block';
+                return;
+            }
+            
+            const fullName = [firstName, middleName, lastName].filter(n => n).join(' ');
+            
+            // Update name in local storage
+            const newNameObj = { first: firstName, middle: middleName, last: lastName };
+            localStorage.setItem(USER_NAME_KEY, JSON.stringify(newNameObj));
+            
+            // Update name in auth credentials (mandatory for consistency)
+            let users = JSON.parse(localStorage.getItem(AUTH_USER_KEY) || '[]');
+            let userIndex = users.findIndex(u => u.email === currentLoggedInUserEmail);
+            if(userIndex > -1) {
+                users[userIndex].name = fullName; // Full name for general use
+                users[userIndex].firstName = firstName;
+                users[userIndex].middleName = middleName;
+                users[userIndex].lastName = lastName;
+                localStorage.setItem(AUTH_USER_KEY, JSON.stringify(users));
+            }
+            
+            loadUserName();
+            
+            messageElement.textContent = "नाम सफलतापूर्वक अपडेट किया गया!";
+            messageElement.style.color = 'green';
+            messageElement.style.display = 'block';
+
+            // Close modal after a short delay to show success
+            setTimeout(closeModal, 1500); 
+        }
+        
+        // ⭐ MODIFIED loadUserName function ⭐
+        function loadUserName() {
+            const nameObj = JSON.parse(localStorage.getItem(USER_NAME_KEY) || '{}');
+            const fullName = [nameObj.first, nameObj.middle, nameObj.last].filter(n => n).join(' ') || "User";
+            
+            if(document.getElementById('userNameDisplay')) document.getElementById('userNameDisplay').textContent = fullName;
+            if(document.getElementById('sidebarUserName')) document.getElementById('sidebarUserName').textContent = fullName;
+            // Update post/reel creation name in case it changes later
+            localStorage.setItem('socialPlatformCurrentUserName', fullName); 
+        }
+
+        // Posts Logic
+        function previewImage(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                selectedMediaURL = ev.target.result;
+                selectedMediaType = file.type.startsWith('image') ? 'image' : 'video';
+                document.getElementById('imagePreviewContainer').style.display = 'block';
+                if(selectedMediaType === 'image') {
+                    document.getElementById('imagePreview').src = selectedMediaURL;
+                    document.getElementById('imagePreview').style.display = 'block';
+                    document.getElementById('videoPreview').style.display = 'none';
+                } else {
+                    document.getElementById('videoPreview').src = selectedMediaURL;
+                    document.getElementById('videoPreview').style.display = 'block';
+                    document.getElementById('imagePreview').style.display = 'none';
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function addPost() {
+            const text = document.getElementById('postText').value;
+            
+            // 🚨 FIX: Added alert if user tries to post nothing
+            if(!text && !selectedMediaURL) {
+                alert("❌ Post karne ke liye kuch likhein ya media chunein (Write something or select media to post).");
+                return;
+            }
+            
+            const post = {
+                id: 'post-' + Date.now(),
+                text: text,
+                mediaURL: selectedMediaURL,
+                mediaType: selectedMediaType,
+                user: localStorage.getItem('socialPlatformCurrentUserName') || "Me", // Use current full name
+                email: currentLoggedInUserEmail, // Store email to filter shared posts
+                isShared: false
+            };
+            
+            let posts = JSON.parse(localStorage.getItem(POSTS_STORAGE_KEY) || '[]');
+            posts.unshift(post);
+            localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(posts));
+            
+            loadPosts();
+            // Reset
+            document.getElementById('postText').value = '';
+            document.getElementById('imagePreviewContainer').style.display = 'none';
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('videoPreview').style.display = 'none';
+            document.getElementById('imageUploadInput').value = ''; // Clear file input
+            selectedMediaURL = null;
+            selectedMediaType = null;
+            
+            alert("✅ Post safaltapoorvak upload ho gayi!");
+        }
+        
+        // ⭐ NEW: Like/Reaction Logic (Handle in DOM directly for this simplified version)
+        function toggleLike(postId, reaction) {
+            const currentEmail = currentLoggedInUserEmail;
+            if (!currentEmail) return alert("Please log in to like a post.");
+
+            let allLikes = JSON.parse(localStorage.getItem(LIKES_STORAGE_KEY) || '{}');
+            if (!allLikes[postId]) {
+                allLikes[postId] = [];
+            }
+            
+            const likeIndex = allLikes[postId].findIndex(l => l.email === currentEmail);
+            
+            if (likeIndex > -1) {
+                // If already liked, remove like/reaction
+                allLikes[postId].splice(likeIndex, 1);
+            } else {
+                // Add new like/reaction
+                allLikes[postId].push({ email: currentEmail, reaction: reaction });
+            }
+
+            localStorage.setItem(LIKES_STORAGE_KEY, JSON.stringify(allLikes));
+            
+            // Re-render the specific post to update count and color
+            loadPostInteractions(postId);
+        }
+        
+        // ⭐ NEW: Load and render like/share info for a post
+        function loadPostInteractions(postId) {
+             const postElement = document.querySelector(`.post[data-post-id="${postId}"]`);
+             if (!postElement) return;
+
+             const allLikes = JSON.parse(localStorage.getItem(LIKES_STORAGE_KEY) || '{}');
+             const likes = allLikes[postId] || [];
+             const likeCount = likes.length;
+             const currentUserEmail = currentLoggedInUserEmail;
+             const userLiked = likes.some(l => l.email === currentUserEmail);
+             
+             // Update Like Button
+             const likeButtonElement = postElement.querySelector('.like-button');
+             if (likeButtonElement) {
+                 likeButtonElement.classList.remove('liked');
+                 if (userLiked) {
+                    likeButtonElement.classList.add('liked');
+                 }
+             }
+
+             // Update Like Count Display
+             const likeCountElement = postElement.querySelector('.like-count-display');
+             if (likeCountElement) {
+                 // **USER CAN SEE HOW MANY PEOPLE LIKED**
+                 likeCountElement.innerHTML = `<span>${likeCount} likes</span>`;
+                 likeCountElement.onclick = () => showLikers(postId);
+             }
+        }
+        
+        // ⭐ NEW: Show List of Likers
+        function showLikers(postId) {
+             const allLikes = JSON.parse(localStorage.getItem(LIKES_STORAGE_KEY) || '{}');
+             const likes = allLikes[postId] || [];
+             const likerNames = likes.map(l => {
+                 // Find the user's name from stored credentials
+                 const users = JSON.parse(localStorage.getItem(AUTH_USER_KEY) || '[]');
+                 const user = users.find(u => u.email === l.email);
+                 return `${user ? user.name : 'Unknown User'} ${l.reaction}`;
+             });
+             
+             const likersList = likerNames.length > 0 ? likerNames.join('\n') : 'No likes yet.';
+             alert(`Liked by (${likes.length}):\n${likersList}`);
+        }
+        
+        // ⭐ NEW: Toggle Share Menu
+        function toggleShareMenu(postId, buttonElement) {
+            const shareMenu = buttonElement.nextElementSibling;
+            document.querySelectorAll('.share-menu').forEach(menu => {
+                if(menu !== shareMenu) menu.style.display = 'none';
+            });
+            
+            shareMenu.style.display = shareMenu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // ⭐ NEW: Handle Share Action
+        function sharePost(postId, shareType) {
+            const postElement = document.querySelector(`.post[data-post-id="${postId}"]`);
+            if (!postElement) return;
+            
+            // Close the menu
+            postElement.querySelector('.share-menu').style.display = 'none';
+            
+            const originalPost = JSON.parse(localStorage.getItem(POSTS_STORAGE_KEY) || '[]').find(p => p.id === postId);
+            if (!originalPost) return alert("Original post not found.");
+            
+            const user = localStorage.getItem('socialPlatformCurrentUserName') || "Me";
+            
+            if (shareType === 'in_app') {
+                const sharedPost = {
+                    id: 'share-' + Date.now(),
+                    text: `Shared a post from ${originalPost.user}: ${originalPost.text}`,
+                    mediaURL: originalPost.mediaURL,
+                    mediaType: originalPost.mediaType,
+                    user: user,
+                    email: currentLoggedInUserEmail,
+                    isShared: true,
+                    originalPostId: postId 
+                };
+                
+                let posts = JSON.parse(localStorage.getItem(POSTS_STORAGE_KEY) || '[]');
+                posts.unshift(sharedPost);
+                localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(posts));
+                
+                // Track shared post by user (for profile display)
+                let sharedList = JSON.parse(localStorage.getItem(SHARED_POSTS_STORAGE_KEY) || '[]');
+                sharedList.push({ sharerEmail: currentLoggedInUserEmail, originalPostId: postId, timestamp: Date.now() });
+                localStorage.setItem(SHARED_POSTS_STORAGE_KEY, JSON.stringify(sharedList));
+                
+                loadPosts();
+                alert(`✅ Post shared to your feed and profile!`);
+            
+            } else if (shareType === 'message') {
+                 // ⭐ Share to Message/Chat
+                 const message = `Check out this post from ${originalPost.user}: "${originalPost.text}". (Link to Post ID: ${postId})`;
+                 // For demo, we just simulate sending it to the message section
+                 document.getElementById('messageDisplay').innerHTML += `<div class="message-bubble sent"><p>You shared a Post: ${message}</p></div>`;
+                 showSection('messageSection');
+                 alert(`✅ Post sent to Message/Chat!`);
+            }
+        }
+
+
+        function loadPosts() {
+            const container = document.getElementById('postFeed');
+            const profileContainer = document.getElementById('tabContentPosts');
+            const posts = JSON.parse(localStorage.getItem(POSTS_STORAGE_KEY) || '[]');
+            const userEmail = currentLoggedInUserEmail; // Current user's email
+            
+            // Pull-to-Refresh: स्क्रॉल पोजीशन को बचाएं
+            const oldScrollTop = feedContainer ? feedContainer.scrollTop : 0; 
+            
+            container.innerHTML = '';
+            if(profileContainer) profileContainer.innerHTML = '';
+            
+            const isAdmin = userEmail === ADMIN_EMAIL;
+            const sharedPostsByMe = JSON.parse(localStorage.getItem(SHARED_POSTS_STORAGE_KEY) || '[]').filter(sp => sp.sharerEmail === userEmail);
+
+
+            posts.forEach(p => {
+                const deleteBtn = isAdmin ? `<button class="admin-delete-btn" style="display:block" onclick="adminDelete('${p.id}', 'post')">🗑️ Delete</button>` : '';
+                
+                let contentHTML = '';
+                if(p.isShared) {
+                    // For shared posts, we try to show the original content if available.
+                    const originalPost = JSON.parse(localStorage.getItem(POSTS_STORAGE_KEY) || '[]').find(op => op.id === p.originalPostId);
+                    
+                    let sharedOriginalContent = 'Original Post Deleted or Not Found.';
+                    if(originalPost) {
+                         let media = '';
+                         if(originalPost.mediaURL) {
+                            media = originalPost.mediaType === 'image' 
+                                ? `<img src="${originalPost.mediaURL}" class="post-media">` 
+                                : `<video src="${originalPost.mediaURL}" controls class="post-media"></video>`;
+                         }
+                         sharedOriginalContent = `<p>${originalPost.text}</p>${media}`;
+                    }
+
+                    contentHTML = `
+                    <p style="font-style: italic; color: #555;">${p.text}</p>
+                    <div class="shared-post-container">
+                        <div class="shared-post-header"><strong>${originalPost ? originalPost.user : 'Unknown User'}</strong>'s Post</div>
+                        ${sharedOriginalContent}
+                    </div>`;
+
+                } else {
+                    let media = '';
+                    if(p.mediaURL) {
+                        media = p.mediaType === 'image' 
+                            ? `<img src="${p.mediaURL}" class="post-media">` 
+                            : `<video src="${p.mediaURL}" controls class="post-media"></video>`;
+                    }
+                    contentHTML = `<p>${p.text}</p>${media}`;
+                }
+                
+                // Profile Grid (Show only posts created by the current user, or shared by them)
+                if(profileContainer) {
+                     const isMyOriginalPost = p.email === userEmail && !p.isShared;
+                     const isMySharedPost = p.isShared && sharedPostsByMe.some(sp => sp.originalPostId === p.originalPostId); // Check if I shared this post
+
+                     if(isMyOriginalPost || isMySharedPost) {
+                         const displayText = p.isShared ? `Shared: ${p.text.substring(0,10)}...` : (p.mediaURL ? (p.mediaType==='image'?`Photo`:'Video') : p.text.substring(0,10));
+                         profileContainer.innerHTML += `<div class="grid-item">
+                                                         ${p.mediaURL ? `<img src="${p.mediaURL}" alt="Media Preview">` : ''}
+                                                         <span class="grid-item-icon">${p.mediaType==='video' ? '▶️' : (p.isShared ? '🔄' : '🖼️')}</span>
+                                                        </div>`;
+                     }
+                }
+                
+                // ⭐ EMOJI CONTAINER
+                const emojiHTML = EMOJI_REACTIONS.map(emoji => `<span class="emoji" onclick="toggleLike('${p.id}', '${emoji}')">${emoji}</span>`).join('');
+                
+                container.innerHTML += `
+                <div class="post" data-post-id="${p.id}">
+                    <div class="post-header-row">
+                        <h3>👤 ${p.user}</h3>
+                        ${deleteBtn}
+                    </div>
+                    ${contentHTML}
+                    
+                    <div class="like-count-display" style="font-size: 13px; color: #4267B2; margin: 10px 0 5px 0; cursor: pointer;">
+                        <span>0 likes</span> 
+                    </div>
+                    
+                    <div class="post-actions">
+                        <div class="like-container">
+                             <div id="emoji-container-${p.id}" class="emoji-container">
+                                ${emojiHTML}
+                             </div>
+                             <button class="post-action-button like-button" 
+                                data-post-id="${p.id}"
+                                onmousedown="startPressTimer('${p.id}')"
+                                onmouseup="endPressTimer('${p.id}')">
+                                <i class="fas fa-heart"></i> Like
+                             </button>
+                        </div>
+                        
+                        <button class="post-action-button" onclick="handleComment('${p.id}', this)">
+                            <i class="fas fa-comment"></i> Comment
+                        </button>
+                        
+                        <div class="like-container"> <button class="post-action-button" onclick="toggleShareMenu('${p.id}', this)">
+                                <i class="fas fa-share"></i> Share
+                            </button>
+                            <div class="share-menu">
+                                <span class="share-menu-item" onclick="sharePost('${p.id}', 'in_app')">🔄 Feed & Profile</span>
+                                <span class="share-menu-item" onclick="sharePost('${p.id}', 'message')">💬 Message/Chat</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="comments-section" style="display:none">
+                         <div class="comment-input-area"><input type="text"><button onclick="alert('Commented')">Send</button></div>
+                    </div>
+                </div>`;
+                
+                // Load interactions after inserting post to DOM
+                loadPostInteractions(p.id);
+            });
+            
+            // Pull-to-Refresh: स्क्रॉल पोजीशन को पुनर्स्थापित करें
+            if (feedContainer) {
+                 feedContainer.scrollTop = oldScrollTop;
+            }
+        }
+        
+        // ⭐ NEW: Long Press Timer Variables and Functions ⭐
+        let pressTimer = {};
+
+        function startPressTimer(postId) {
+            // Clear any existing timer for this post
+            clearTimeout(pressTimer[postId]);
+            
+            // Start a new timer
+            pressTimer[postId] = setTimeout(() => {
+                document.getElementById(`emoji-container-${postId}`).style.display = 'flex'; // Show Emojis
+            }, 400); // 400ms = Long Press
+        }
+
+        function endPressTimer(postId) {
+            // Check if it was a long press (i.e., if emoji container is visible)
+            const emojiContainer = document.getElementById(`emoji-container-${postId}`);
+            
+            if (emojiContainer.style.display !== 'flex') {
+                // It was a short press (click), treat as a regular Like toggle (default heart reaction)
+                clearTimeout(pressTimer[postId]);
+                toggleLike(postId, '❤️'); 
+            } else {
+                 // It was a long press, wait for emoji selection or hide after timeout
+                 clearTimeout(pressTimer[postId]);
+                 // Hide emoji container after a short delay if no emoji was clicked (handled by toggleLike(..))
+                 setTimeout(() => { emojiContainer.style.display = 'none'; }, 200); 
+            }
+        }
+        // End of Long Press Timer
+
+        function handleComment(id, btn) {
+            const sec = btn.closest('.post').querySelector('.comments-section');
+            sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Reels Logic
+        function previewReel(e) {
+            const file = e.target.files[0];
+            const shareReelButton = document.getElementById('shareReelButton');
+            
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    selectedReelURL = ev.target.result;
+                    document.getElementById('reelPreviewContainer').style.display = 'block';
+                    document.getElementById('reelPreviewVideo').src = selectedReelURL;
+                    document.getElementById('reelPreviewVideo').style.display = 'block';
+                    
+                    // 🚨 Fix: Enable the share button
+                    shareReelButton.disabled = false;
+                    
+                    // Remove the previous temporary text if any
+                    document.getElementById('reelCaption').placeholder = "Reel के लिए कैप्शन लिखें..."; 
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // 🚨 Fix: Disable the share button if no file is selected (e.g., if user cancels the selection)
+                selectedReelURL = null; 
+                document.getElementById('reelPreviewVideo').src = '';
+                document.getElementById('reelPreviewVideo').style.display = 'none';
+                document.getElementById('reelPreviewContainer').style.display = 'none';
+                shareReelButton.disabled = true;
+            }
+        }
+
+        function addReelToFeed() {
+            const caption = document.getElementById('reelCaption').value;
+            const shareReelButton = document.getElementById('shareReelButton');
+            const reelFileInput = document.getElementById('reelFileInput'); // Get the file input element
+            
+            // 🚨 NEW, STRONGER CHECK 🚨
+            if (!reelFileInput.files || reelFileInput.files.length === 0) {
+                alert("❌ Kripya reel file chunein. 'Reel chunein' button par click karke video select karein.");
+                shareReelButton.disabled = true; // Ensure it stays disabled if somehow called without file
+                return; 
+            }
+            
+            // Fallback check (This should ideally not be needed if the file input check passes)
+            if (!selectedReelURL) {
+                 alert("❌ File data load nahi hua. Kripya dobara file chunein.");
+                 shareReelButton.disabled = true;
+                 return;
+            }
+            
+            // Temporarily disable button to prevent double click
+            shareReelButton.disabled = true;
+
+            const reel = {
+                id: 'reel-' + Date.now(),
+                url: selectedReelURL,
+                caption: caption,
+                user: localStorage.getItem('socialPlatformCurrentUserName') || "Me"
+            };
+            let reels = JSON.parse(localStorage.getItem(REELS_STORAGE_KEY) || '[]');
+            reels.unshift(reel);
+            localStorage.setItem(REELS_STORAGE_KEY, JSON.stringify(reels));
+            loadReels();
+            
+            // Reset inputs and hide preview
+            document.getElementById('reelCaption').value = '';
+            reelFileInput.value = ''; // Clear file input
+            document.getElementById('reelPreviewVideo').src = '';
+            document.getElementById('reelPreviewVideo').style.display = 'none';
+            document.getElementById('reelPreviewContainer').style.display = 'none'; 
+            selectedReelURL = null; // Reset the state variable
+
+            // Re-disable button after successful share
+            shareReelButton.disabled = true; 
+
+            alert("✅ Reel safaltapoorvak share ho gayi!");
+        }
+
+        // --- NEW REEL SHARE FUNCTION ---
+        function shareReel(reelId, shareType) {
+            const originalReel = JSON.parse(localStorage.getItem(REELS_STORAGE_KEY) || '[]').find(r => r.id === reelId);
+            if (!originalReel) return alert("Original reel not found.");
+
+            const reelURL = originalReel.url;
+            const reelCaption = originalReel.caption || 'Check out this Reel!';
+            
+            if (shareType === 'whatsapp') {
+                const message = encodeURIComponent(`इस Reel को देखें: "${reelCaption}"\nLink (Demo): ${reelURL}`);
+                // WhatsApp Web/App शेयर लिंक (यह डेमो URL है)
+                window.open(`https://api.whatsapp.com/send?text=${message}`, '_blank');
+                alert("✅ Reel WhatsApp पर शेयर की जा रही है!");
+            
+            } else if (shareType === 'in_app') {
+                // Reel को फ़ीड में एक Post के रूप में शेयर करना (जैसे Instagram Story पर Post शेयर करते हैं)
+                const user = localStorage.getItem('socialPlatformCurrentUserName') || "Me";
+                const sharedPost = {
+                    id: 'share-reel-' + Date.now(),
+                    text: `🎬 Shared this Reel from ${originalReel.user}: ${reelCaption}`,
+                    mediaURL: originalReel.url,
+                    mediaType: 'video', // Reel हमेशा video होती है
+                    user: user,
+                    email: currentLoggedInUserEmail,
+                    isShared: true,
+                    originalPostId: reelId // Reel ID को originalPostId के रूप में स्टोर करना
+                };
+                
+                let posts = JSON.parse(localStorage.getItem(POSTS_STORAGE_KEY) || '[]');
+                posts.unshift(sharedPost);
+                localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(posts));
+                
+                loadPosts();
+                showSection('feedSection');
+                alert(`✅ Reel आपके Feed और Profile पर शेयर हो गई!`);
+            } else if (shareType === 'message') {
+                const message = `Check out this Reel from ${originalReel.user}: "${reelCaption}". (Link to Reel ID: ${reelId})`;
+                document.getElementById('messageDisplay').innerHTML += `<div class="message-bubble sent"><p>You shared a Reel: ${message}</p></div>`;
+                showSection('messageSection');
+                alert(`✅ Reel sent to Message/Chat!`);
+            }
+            
+            // मेनू बंद करें
+            document.querySelectorAll('.share-menu-reel').forEach(menu => menu.style.display = 'none');
+        }
+
+        // Reel Share Menu Toggle Function
+        function toggleReelShareMenu(reelId, buttonElement) {
+            const shareMenu = buttonElement.nextElementSibling;
+            document.querySelectorAll('.share-menu-reel').forEach(menu => {
+                if(menu !== shareMenu) menu.style.display = 'none';
+            });
+            
+            shareMenu.style.display = shareMenu.style.display === 'block' ? 'none' : 'block';
+        }
+        // --- END NEW REEL SHARE FUNCTION ---
+
+
+        function loadReels() {
+            const container = document.getElementById('reelsFeed');
+            const profileContainer = document.getElementById('tabContentReels'); // NEW: For profile tab
+            const reels = JSON.parse(localStorage.getItem(REELS_STORAGE_KEY) || '[]');
+            container.innerHTML = '';
+            if(profileContainer) profileContainer.innerHTML = ''; // Clear profile container
+            
+            const isAdmin = currentLoggedInUserEmail === ADMIN_EMAIL;
+            const userEmail = currentLoggedInUserEmail; // Current user's email
+
+            reels.forEach(r => {
+                const deleteBtn = isAdmin ? `<button class="admin-delete-btn" style="display:block" onclick="adminDelete('${r.id}', 'reel')">🗑️ Delete</button>` : '';
+                
+                // Profile Grid Logic
+                if(profileContainer && r.user === localStorage.getItem('socialPlatformCurrentUserName')) {
+                     profileContainer.innerHTML += `<div class="grid-item">
+                                                         <video src="${r.url}" style="width:100%; height:100%; object-fit:cover;"></video>
+                                                         <span class="grid-item-icon">🎬</span>
+                                                        </div>`;
+                }
+                
+                container.innerHTML += `
+                <div class="reel-item-container" data-post-id="${r.id}">
+                    <div style="display:flex; justify-content:space-between; align-items: center;">
+                        <h3>👤 ${r.user}</h3>
+                        ${deleteBtn}
+                    </div>
+                    <p>${r.caption}</p>
+                    <video src="${r.url}" controls style="width:100%"></video>
+                    
+                    <div class="post-actions" style="border-top: none;">
+                        <div class="like-container" style="position:relative; margin-top: 10px;"> 
+                            <button class="post-action-button" onclick="toggleReelShareMenu('${r.id}', this)">
+                                <i class="fas fa-share"></i> **Share Reel**
+                            </button>
+                            <div class="share-menu share-menu-reel" style="right: auto; left: 0;">
+                                <span class="share-menu-item" onclick="shareReel('${r.id}', 'in_app')">🔄 Feed & Profile</span>
+                                <span class="share-menu-item" onclick="shareReel('${r.id}', 'whatsapp')">💬 WhatsApp</span>
+                                <span class="share-menu-item" onclick="shareReel('${r.id}', 'message')">📩 Chat/DM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            });
+        }
+        
+        // Stories & Profile
+        
+        function getStories() {
+            return JSON.parse(localStorage.getItem(STORIES_STORAGE_KEY) || '[]');
+        }
+
+        function saveStories(stories) {
+            localStorage.setItem(STORIES_STORAGE_KEY, JSON.stringify(stories));
+        }
+        
+        function uploadStory(event) {
+             const file = event.target.files[0];
+             if(!file) return;
+             const reader = new FileReader();
+             reader.onload = (e) => {
+                 const storyData = {
+                     id: MY_STORY_ID, 
+                     mediaURL: e.target.result,
+                     mediaType: file.type.startsWith('image') ? 'image' : 'video',
+                     user: localStorage.getItem('socialPlatformCurrentUserName') || "Me",
+                     profilePhoto: localStorage.getItem(USER_PROFILE_PHOTO_KEY) || 'https://via.placeholder.com/30/FFCC00/000000?text=U',
+                     views: 0, // Initial view count
+                     viewedByMe: false
+                 };
+                 
+                 let stories = getStories().filter(s => s.id !== MY_STORY_ID); // Remove old story
+                 stories.unshift(storyData); // Add new story at the beginning
+                 saveStories(stories);
+                 
+                 loadMyStory();
+                 loadStories();
+                 alert("Story Uploaded!");
+             }
+             reader.readAsDataURL(file);
+        }
+        
+        function loadMyStory() {
+            const myCard = document.getElementById('myStoryCard');
+            const stories = getStories();
+            const myStory = stories.find(s => s.id === MY_STORY_ID);
+            const profileSrc = localStorage.getItem(USER_PROFILE_PHOTO_KEY) || 'https://via.placeholder.com/30/FFCC00/000000?text=U';
+            
+            // Set the profile icon for the "My Story" card
+            document.getElementById('myStoryProfileIcon').src = profileSrc;
+            
+            if (myStory) {
+                myCard.classList.remove('add-story');
+                myCard.classList.add('my-uploaded-story');
+                myCard.setAttribute('onclick', `viewStory('${MY_STORY_ID}')`);
+                document.getElementById('myStoryPlaceholder').style.display = 'none';
+                
+                // Set background image for the story card
+                myCard.style.backgroundImage = `url('${myStory.mediaURL}')`;
+                myCard.style.backgroundSize = 'cover';
+                myCard.style.backgroundPosition = 'center';
+                
+                document.getElementById('myStoryText').textContent = "Your Story";
+                document.getElementById('myStoryText').style.cssText = 'color: white; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); position: absolute; bottom: 5px;';
+            } else {
+                myCard.classList.add('add-story');
+                myCard.classList.remove('my-uploaded-story');
+                myCard.setAttribute('onclick', "document.getElementById('storyUploadInput').click()");
+                document.getElementById('myStoryPlaceholder').style.display = 'block';
+                document.getElementById('myStoryPlaceholder').src = "https://via.placeholder.com/100x100/f0f2f5/000000?text=+";
+                myCard.style.backgroundImage = 'none'; 
+                document.getElementById('myStoryText').textContent = "Create story";
+                document.getElementById('myStoryText').style.cssText = 'color: black; font-weight: 500; text-shadow: none; position: absolute; bottom: 10px;';
+            }
+        }
+        
+        function loadStories() {
+            const container = document.getElementById('dynamicStoriesContainer');
+            container.innerHTML = '';
+            
+            const myStory = getStories().find(s => s.id === MY_STORY_ID);
+            
+            // Generate dummy stories with profile photos
+            const demoStories = [
+                { id: 'demo1', mediaURL: 'https://via.placeholder.com/100/4267B2/FFFFFF?text=Demo+Story', mediaType: 'image', user: 'Prie Prince', profilePhoto: DEMO_PROFILE_PHOTOS['Prie Prince'], views: 5, viewedByMe: false },
+                { id: 'demo2', mediaURL: 'https://via.placeholder.com/100/f030a3/FFFFFF?text=Story+2', mediaType: 'image', user: 'Anika Queen', profilePhoto: DEMO_PROFILE_PHOTOS['Anika Queen'], views: 12, viewedByMe: true },
+            ];
+
+            // Combine user's story with demos, excluding the user's story from the main iteration if it's already in the 'myStoryCard' position
+            let allStories = demoStories;
+            
+            // Sort to ensure non-viewed are first 
+            allStories.sort((a, b) => a.viewedByMe - b.viewedByMe);
+
+            allStories.forEach(s => {
+                const viewedClass = s.viewedByMe ? 'viewed' : '';
+                container.innerHTML += `
+                <div class="story-card ${viewedClass}" data-story-id="${s.id}" onclick="viewStory('${s.id}')" 
+                     style="background-image: url('${s.mediaURL}'); background-size: cover; background-position: center;">
+                    <img class="story-profile-icon" src="${s.profilePhoto}" alt="Profile">
+                    <p>${s.user}</p>
+                </div>`;
+            });
+        }
+        
+        function viewStory(storyId) {
+            // Get all stories, including the one posted by the current user if it exists
+            const allPossibleStories = getStories().concat([
+                { id: 'demo1', mediaURL: 'https://via.placeholder.com/400x700/4267B2/FFFFFF?text=Prie+Prince+Story', mediaType: 'image', user: 'Prie Prince', profilePhoto: DEMO_PROFILE_PHOTOS['Prie Prince'], views: 5, viewedByMe: false },
+                { id: 'demo2', mediaURL: 'https://via.placeholder.com/400x700/f030a3/FFFFFF?text=Anika+Queen+Story', mediaType: 'image', user: 'Anika Queen', profilePhoto: DEMO_PROFILE_PHOTOS['Anika Queen'], views: 12, viewedByMe: true },
+            ]).filter(s => s.id === storyId || s.id === MY_STORY_ID); // Keep my story for view count
+
+            currentStoryList = allPossibleStories.filter(s => s.id === storyId); 
+
+            if (currentStoryList.length === 0) return alert("Story not found.");
+
+            let storyToView = currentStoryList[0];
+            
+            // Find the story in persistent storage to update views if it's not the user's own story and hasn't been viewed
+            let allStoriesInStorage = getStories();
+            let indexInStorage = allStoriesInStorage.findIndex(s => s.id === storyId);
+            
+            if (storyId !== MY_STORY_ID && indexInStorage > -1 && !allStoriesInStorage[indexInStorage].viewedByMe) {
+                // Simulate viewing and update flag
+                storyToView.views = (storyToView.views || 0) + 1;
+                storyToView.viewedByMe = true;
+                
+                allStoriesInStorage[indexInStorage].views = storyToView.views;
+                allStoriesInStorage[indexInStorage].viewedByMe = true;
+                saveStories(allStoriesInStorage);
+                loadStories(); // Refresh tray to update border
+            } else if (storyId === MY_STORY_ID) {
+                 // For the owner, pull the view count from the single instance in storage
+                 storyToView = allStoriesInStorage.find(s => s.id === MY_STORY_ID) || storyToView;
+            }
+
+            // Load the story content
+            currentStoryIndex = 0;
+            loadStoryContent(storyToView);
+            document.getElementById('storyViewModal').style.display = 'flex';
+        }
+
+        function loadStoryContent(story) {
+            const mediaContainer = document.getElementById('currentStoryMediaContainer');
+            mediaContainer.innerHTML = '';
+            
+            if (story.mediaType.startsWith('image')) {
+                mediaContainer.innerHTML = `<img src="${story.mediaURL}" class="story-media-display" alt="Story">`;
+            } else if (story.mediaType.startsWith('video')) {
+                mediaContainer.innerHTML = `<video src="${story.mediaURL}" controls autoplay class="story-media-display"></video>`;
+            }
+            
+            document.getElementById('storyViewerProfile').src = story.profilePhoto;
+            document.getElementById('storyUserText').textContent = story.user;
+            
+            // ⭐ View Count (Now at the bottom)
+            const isMyStory = story.id === MY_STORY_ID;
+            document.getElementById('storyViewCount').textContent = `👁️ ${story.views || 0}`;
+            
+            // ⭐ Delete Button (Cut)
+            document.getElementById('deleteStoryButton').style.display = isMyStory ? 'block' : 'none';
+
+            // ⭐ Send Message Button
+            document.getElementById('sendMessageButton').style.display = isMyStory ? 'none' : 'block';
+
+
+            // Navigation buttons (for single story view, they will be hidden in this simplified logic)
+            document.getElementById('prevStoryButton').style.display = 'none';
+            document.getElementById('nextStoryButton').style.display = 'none';
+        }
+
+        function deleteMyStory() {
+            if (!confirm('क्या आप अपनी स्टोरी हटाना चाहते हैं?')) return;
+            
+            let stories = getStories().filter(s => s.id !== MY_STORY_ID);
+            saveStories(stories);
+            
+            closeStoryModal();
+            loadMyStory();
+            loadStories();
+            alert("Story Deleted!");
+        }
+
+        function sendStoryMessage() {
+            const userName = document.getElementById('storyUserText').textContent;
+            alert(`💬 आप ${userName} की स्टोरी पर मैसेज भेज रहे हैं! (यह एक डेमो फ़ीचर है)`);
+            closeStoryModal();
+        }
+
+        function closeStoryModal() {
+            document.getElementById('storyViewModal').style.display = 'none';
+            // Stop any playing video
+            const video = document.querySelector('#currentStoryMediaContainer video');
+            if (video) video.pause();
+        }
+
+        function navigateStory(direction) {
+            // Placeholder for multi-story navigation (not fully implemented in this version)
+            // alert('Next/Previous Story - Feature not fully implemented for single story view');
+        }
+
+        function showProfileTab(t){ 
+            document.getElementById('tabContentPosts').style.display = t==='posts'?'grid':'none';
+            document.getElementById('tabContentReels').style.display = t==='reels'?'grid':'none';
+            if(t === 'reels') loadReels(); // Reload reels if needed
+        }
+        function changeProfilePhoto(e) {
+            const file = e.target.files[0];
+            if(file) {
+                 const reader = new FileReader();
+                 reader.onload = (ev) => {
+                     const newPhotoUrl = ev.target.result;
+                     localStorage.setItem(USER_PROFILE_PHOTO_KEY, newPhotoUrl);
+                     
+                     // Also update in auth credentials
+                     let users = JSON.parse(localStorage.getItem(AUTH_USER_KEY) || '[]');
+                     let userIndex = users.findIndex(u => u.email === currentLoggedInUserEmail);
+                     if(userIndex > -1) {
+                         users[userIndex].photo = newPhotoUrl;
+                         localStorage.setItem(AUTH_USER_KEY, JSON.stringify(users));
+                     }
+                     
+                     loadProfilePhoto();
+                     loadStories(); // Refresh stories to show new logo
+                 }
+                 reader.readAsDataURL(file);
+            }
+        }
+        function loadProfilePhoto() {
+             const src = localStorage.getItem(USER_PROFILE_PHOTO_KEY);
+             if(src) {
+                 if(document.getElementById('profilePhoto')) document.getElementById('profilePhoto').src = src;
+                 if(document.getElementById('sidebarProfilePhoto')) document.getElementById('sidebarProfilePhoto').src = src;
+                 if(document.getElementById('myStoryProfileIcon')) document.getElementById('myStoryProfileIcon').src = src;
+             }
+        }
+        function changeCoverPhoto(e) {
+             const file = e.target.files[0];
+             if(file) {
+                 const reader = new FileReader();
+                 reader.onload = (ev) => {
+                     document.getElementById('coverPhotoContainer').style.backgroundImage = `url('${ev.target.result}')`;
+                 }
+                 reader.readAsDataURL(file);
+             }
+        }
+        
+        // --- UTILITY FUNCTIONS ---
+        function refreshPage() {
+            location.reload(); 
+        }
+
+        function updateISTTime() {
+            const d = new Date().toLocaleTimeString('en-IN', {timeZone:'Asia/Kolkata'});
+            if(document.getElementById('istTimeDisplay')) document.getElementById('istTimeDisplay').textContent = d;
+        }
+        setInterval(updateISTTime, 1000);
+
+        function performSearch() {
+            const val = document.getElementById('searchInput').value;
+            document.getElementById('searchResults').innerHTML = `<p>Result for "${val}": Demo User found.</p>`;
+        }
+        function submitReport() { alert('Report Submitted'); }
+        function sendMessage() {
+            const val = document.getElementById('messageInput').value;
+            if(val) {
+                document.getElementById('messageDisplay').innerHTML += `<div class="message-bubble sent"><p>You: ${val}</p></div>`;
+                document.getElementById('messageInput').value = '';
+            }
+        }
+
+        // --- NEW CALL FUNCTIONS ---
+        function startCall(type) {
+            const recipientName = "Demo Friend"; // या उस यूज़र का नाम जिसे आप कॉल कर रहे हैं
+            
+            if (type === 'audio') {
+                alert(`📞 ${recipientName} को **ऑडियो कॉल** कर रहे हैं! (Demo)`);
+            } else if (type === 'video') {
+                alert(`📹 ${recipientName} को **वीडियो कॉल** कर रहे हैं! (Demo)`);
+            }
+        }
+        // --- END NEW CALL FUNCTIONS ---
+
+        // ⭐ NEW MENU JS FUNCTIONS ⭐
+        function openFullScreenMenu() {
+            // 1. Load User Data into Menu
+            const name = document.getElementById('userNameDisplay').textContent || "User";
+            const photo = document.getElementById('sidebarProfilePhoto').src;
+            
+            document.getElementById('fbMenuUserName').textContent = name;
+            document.getElementById('fbMenuUserPhoto').src = photo;
+
+            // 2. Show the Menu
+            document.getElementById('fbFullScreenMenu').style.display = 'flex';
+            
+            // 3. Ensure Old Dropdown is closed (just in case)
+            const oldDrop = document.getElementById('settingsDropdown');
+            if(oldDrop) oldDrop.classList.remove('open');
+        }
+        
+        function closeFullScreenMenu() {
+            document.getElementById('fbFullScreenMenu').style.display = 'none';
+        }
+        
+        // Helper to run an action and close the menu
+        function menuAction(actionFunction) {
+            actionFunction();
+            closeFullScreenMenu();
+        }
+        // ⭐ END MENU JS FUNCTIONS ⭐
+
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ensure Admin exists
+            let creds = JSON.parse(localStorage.getItem(AUTH_USER_KEY) || '[]');
+            if(!creds.find(u => u.email === ADMIN_EMAIL)) {
+                creds.push({
+                    email: ADMIN_EMAIL, password: 'admin', 
+                    name: 'Admin', firstName: 'Admin', middleName: '', lastName: 'User',
+                    isSuspended: false, photo: 'https://via.placeholder.com/30/000000/FFFFFF?text=A'
+                });
+                localStorage.setItem(AUTH_USER_KEY, JSON.stringify(creds));
+            }
+            checkLoginStatus();
+        });
+    </script>
+</body>
+</html>
+```
